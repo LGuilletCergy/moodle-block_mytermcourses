@@ -21,9 +21,9 @@
  * 95011 Cergy-Pontoise cedex
  * FRANCE
  *
- * Displays the courses within which the user his enrolled, their categories, 
+ * Displays the courses within which the user his enrolled, their categories,
  * and their teachers. Courses open to all users are also displayed.
- * Courses are displayed on two columns, one for each term in the year. 
+ * Courses are displayed on two columns, one for each term in the year.
  * Teachers can move their courses to select the relevant column.
  *
  * @package    block_mytermcourses
@@ -35,25 +35,30 @@
  */
 
 $capabilities = array(
+
     'block/mytermcourses:myaddinstance' => array(
+
         'captype' => 'write', 'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array('manager' => CAP_ALLOW),
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
 
     'block/mytermcourses:addinstance' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_XSS, 'captype' => 'write', 'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array('manager' => CAP_ALLOW),
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 
     'block/mytermcourses:createcourse' => array(
+
         'riskbitmask' => RISK_SPAM | RISK_XSS, 'captype' => 'write', 'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array('manager' => CAP_ALLOW),        
+        'archetypes' => array('manager' => CAP_ALLOW),
     ),
 
     'block/mytermcourses:fetcholdcategory' => array(
+        
         'riskbitmask' => RISK_SPAM | RISK_XSS, 'captype' => 'write', 'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array('manager' => CAP_ALLOW),        
+        'archetypes' => array('manager' => CAP_ALLOW),
     ),
 );

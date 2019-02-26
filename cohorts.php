@@ -30,7 +30,7 @@
  *
  * File : cohorts.php
  * Page where a course creator selects cohorts to populate his newly created course.
- * 
+ *
  */
 
 require_once('../../config.php');
@@ -67,33 +67,41 @@ echo '<p>'.get_string('incategory', 'block_mytermcourses').' '.$category->name.'
 $mform = new block_mytermcourses_cohorts_form();
 
 if ($mform->is_cancelled()) {
+
     redirect($courseurl);
 } else if ($submitteddata = $mform->get_data()) {
-	$studentroleid = $DB->get_record('role', array('shortname' => 'student'))->id;
-	$cohortplugin = enrol_get_plugin('cohort');
-	
-	foreach ($submitteddata as $datakey => $datavalue) {		
-		$keyprefix = substr($datakey, 0, 6);
-		if (($keyprefix == 'cohort') && $datavalue) {
-			$cohortid = substr($datakey, 6);
-			$cohort = $DB->get_record('cohort', array('id' => $cohortid));	
-			$group = new stdClass();
+
+    $studentroleid = $DB->get_record('role', array('shortname' => 'student'))->id;
+    $cohortplugin = enrol_get_plugin('cohort');
+
+    foreach ($submitteddata as $datakey => $datavalue) {
+
+        $keyprefix = substr($datakey, 0, 6);
+        if (($keyprefix == 'cohort') && $datavalue) {
+
+            $cohortid = substr($datakey, 6);
+            $cohort = $DB->get_record('cohort', array('id' => $cohortid));
+            $group = new stdClass();
             $group->name = $cohort->name;
             $group->idnumber = $cohort->idnumber;
             $group->courseid = $courseid;
             $groupid = groups_create_group($group);
-			$cohortplugin->add_instance($course, array('customint1' => $cohortid, 'roleid' => $studentroleid,
-                'customint2' => $groupid));
+            $cohortplugin->add_instance($course,
+                    array('customint1' => $cohortid, 'roleid' => $studentroleid, 'customint2' => $groupid));
             $trace = new null_progress_trace();
             enrol_cohort_sync($trace, $course->id);
             $trace->finished();
-		}
-	}
+        }
+    }
+
     redirect($courseurl);
 } else {
-	echo '<p style="text-align:justify">'.get_string('cohortsare', 'block_mytermcourses').'</p>';
+
+    echo '<p style="text-align:justify">'.get_string('cohortsare', 'block_mytermcourses').'</p>';
     $mform->display();
-    echo "<p style='text-align:justify'><a href='$CFG->wwwroot/local/cohortmanager/viewinfo.php?contextid=$coursecontext->id&origin=course'>"
-        .get_string('alllevelcohorts', 'block_mytermcourses')." $levelcategory->name</a></p>";
+    echo "<p style='text-align:justify'><a href='$CFG->wwwroot/local/cohortmanager/viewinfo.php?"
+            . "contextid=$coursecontext->id&origin=course'>".get_string('alllevelcohorts', 'block_mytermcourses').
+            " $levelcategory->name</a></p>";
 }
+
 echo $OUTPUT->footer();

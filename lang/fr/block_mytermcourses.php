@@ -21,9 +21,9 @@
  * 95011 Cergy-Pontoise cedex
  * FRANCE
  *
- * Displays the courses within which the user his enrolled, their categories, 
+ * Displays the courses within which the user his enrolled, their categories,
  * and their teachers. Courses open to all users are also displayed.
- * Courses are displayed on two columns, one for each term in the year. 
+ * Courses are displayed on two columns, one for each term in the year.
  * Teachers can move their courses to select the relevant column.
  *
  * @package    block_mytermcourses
@@ -32,7 +32,7 @@
  *
  * File : lang/fr/block_mytermcourses.php
  * French text strings
- * 
+ *
  */
 
 $string['pluginname'] = 'Mes cours';
@@ -49,7 +49,9 @@ $string['notenrolled'] = "Vous n'êtes inscrit à aucun cours";
 $string['firstterm'] = 'Premier semestre';
 $string['secondterm'] = 'Second semestre';
 $string['configidnumber_help'] = 'Pour afficher les cours, les trier par idnumber et pas par sortorder.';
-$string['configcommon_help'] = 'Les cours de ces catégories seront affichés pour tous les utilisateurs. Vous voudrez certainement vous assurer que ces cours sont bien ouverts aux utilisateurs non inscrits. Ecrire les id des catégories, avec des symboles ; pour les séparer.';
+$string['configcommon_help'] = 'Les cours de ces catégories seront affichés pour tous les utilisateurs.'
+        . ' Vous voudrez certainement vous assurer que ces cours sont bien ouverts aux utilisateurs non inscrits.'
+        . ' Ecrire les id des catégories, avec des symboles ; pour les séparer.';
 $string['addcourse'] = "Ajout d'un nouveau cours";
 $string['myoldcourses'] = 'Mes anciens cours';
 $string['similarnewcourses'] = 'Déjà récupéré';
@@ -62,16 +64,22 @@ $string['cantseecourse'] = 'Je ne vois pas mon cours. Que faire ?';
 $string['reallyfetchagain'] = 'Voulez-vous vraiment transférer ce cours à nouveau ?';
 $string['alreadycreated'] = 'Déjà créé';
 $string['createagain'] = 'Créer à nouveau';
-$string['reallycreateagain'] = 'Il y a déjà un espace de cours Moodle pour ce même cours Apogée. Voulez-vous vraiment en créer un autre ?';
+$string['reallycreateagain'] = 'Il y a déjà un espace de cours Moodle pour ce même cours Apogée.'
+        . ' Voulez-vous vraiment en créer un autre ?';
 $string['chooseformat'] = 'Choisissez un format pour votre cours';
 $string['choosecategory'] = 'Choisissez une catégorie de cours';
 $string['choosefaculty'] = 'Choisissez une composante';
 $string['chooselevel'] = 'Choisissez un niveau';
 $string['choosetraining'] = 'Choisissez une formation (VET)';
 $string['suggestedcohorts'] = 'Cohortes suggérées';
-$string['mutualchooseany'] = 'Si le cours que vous créez est mutualisé entre plusieurs des formations ci-dessous, cliquez sur n\'importe laquelle des formations concernées.';
-$string['categorynotfound'] = 'Vous ne trouvez pas la catégorie que vous cherchez ? Vous pouvez en déclarer une nouvelle. Mais évitez d\'utiliser ceci trop souvent : il vaut mieux déclarer les nouvelles catégories dans Apogée plutôt qu\'ici.';
-$string['coursenotfound'] = 'Vous ne trouvez pas le cours que vous cherchez ? Vous pouvez en déclarer un nouveau. Mais évitez d\'utiliser ceci trop souvent : il vaut mieux déclarer les nouveaux cours dans Apogée plutôt qu\'ici.';
+$string['mutualchooseany'] = 'Si le cours que vous créez est mutualisé entre plusieurs des formations ci-dessous,'
+        . ' cliquez sur n\'importe laquelle des formations concernées.';
+$string['categorynotfound'] = 'Vous ne trouvez pas la catégorie que vous cherchez ? Vous pouvez en déclarer une nouvelle.'
+        . ' Mais évitez d\'utiliser ceci trop souvent : il vaut mieux déclarer les nouvelles catégories dans Apogée'
+        . ' plutôt qu\'ici.';
+$string['coursenotfound'] = 'Vous ne trouvez pas le cours que vous cherchez ? Vous pouvez en déclarer un nouveau.'
+        . ' Mais évitez d\'utiliser ceci trop souvent : il vaut mieux déclarer les nouveaux cours dans Apogée'
+        . ' plutôt qu\'ici.';
 $string['createnewcategory'] = 'Créer une nouvelle catégorie';
 $string['missingcategoryname'] = 'Vous devez donner un nom à la catégorie que vous créez.';
 $string['missingcoursename'] = 'Vous devez donner un nom au cours que vous créez.';
@@ -80,10 +88,18 @@ $string['categoryplaceholder'] = 'Choisissez bien. Vous ne pourrez pas le modifi
 $string['courseplaceholder'] = '';
 $string['creatingcourse'] = 'Création du cours';
 $string['incategory'] = 'dans la catégorie';
-$string['cohortsare'] = 'Les "cohortes" d\'étudiants correspondent aux groupes Apogée. Si vous liez une cohorte à votre cours, chaque fois qu\'un étudiant sera ajouté à la cohorte (dans Apogée), il sera automatiquement ajouté au cours.';
-$string['noknowncohorts'] = 'Nous n\'avons aucune information concernant les cohortes d\'étudiants que vous pourriez vouloir lier à ce cours.';
-$string['choosecohorts'] = 'D\'après les informations dont nous disposons, ces cohortes peuvent vous intéresser. Merci de vérifier qu\'il n\'y a pas d\'erreur.';
-$string['alllevelcohorts'] = 'Vous ne trouvez pas les cohortes que vous cherchez ? Cliquer ici pour voir toutes les cohortes de';
-$string['tryenroldemands'] = "Vérifiez auprès de votre secrétariat pédagogique que vous êtes inscrit dans le bon groupe Apogée et auprès de votre enseignant qu'il a bien lié ce groupe à ce cours. Sinon, cherchez dans la <a href='../course/index.php'>Liste complète des cours</a>. Vous pourrez peut-être déposer une demande d'inscription (si votre enseignant a activé cette possibilité).";
+$string['cohortsare'] = 'Les "cohortes" d\'étudiants correspondent aux groupes Apogée.'
+        . ' Si vous liez une cohorte à votre cours, chaque fois qu\'un étudiant sera ajouté à la cohorte (dans Apogée),'
+        . ' il sera automatiquement ajouté au cours.';
+$string['noknowncohorts'] = 'Nous n\'avons aucune information concernant les cohortes d\'étudiants'
+        . ' que vous pourriez vouloir lier à ce cours.';
+$string['choosecohorts'] = 'D\'après les informations dont nous disposons, ces cohortes peuvent vous intéresser.'
+        . ' Merci de vérifier qu\'il n\'y a pas d\'erreur.';
+$string['alllevelcohorts'] = 'Vous ne trouvez pas les cohortes que vous cherchez ?'
+        . ' Cliquer ici pour voir toutes les cohortes de';
+$string['tryenroldemands'] = "Vérifiez auprès de votre secrétariat pédagogique que vous êtes inscrit"
+        . " dans le bon groupe Apogée et auprès de votre enseignant qu'il a bien lié ce groupe à ce cours."
+        . " Sinon, cherchez dans la <a href='../course/index.php'>Liste complète des cours</a>."
+        . " Vous pourrez peut-être déposer une demande d'inscription (si votre enseignant a activé cette possibilité).";
 
 

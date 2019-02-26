@@ -34,54 +34,74 @@
  */
 
 if (!defined('MOODLE_INTERNAL')) {
+
     die('Direct access to this script is forbidden.'); // It must be included from a Moodle page.
 }
 
 require_once("$CFG->libdir/formslib.php");
 
 class block_mytermcourses_cohorts_form extends moodleform {
-	public function definition() {
-		global $CFG, $COURSE, $DB, $USER;
+
+    public function definition() {
+
+        global $CFG, $COURSE, $DB, $USER;
 
         $courseidnumber = $COURSE->idnumber;
         $coursecategory = $DB->get_record('course_categories', array('id' => $COURSE->category));
         $levelcategory =  $DB->get_record('course_categories', array('id' => $coursecategory->parent));
+
         if (strpos($courseidnumber, '+')) {
-			$idnumberparts = explode('+', $courseidnumber);
-			$courseidnumber = $idnumberparts[0];			
-		}
-		$idnumberparts2 = explode('-', $courseidnumber);
-		$courseelpcode = $idnumberparts2[2];
-        $availablecoursecohorts = $DB->get_records('local_cohortmanager_info', array('codeelp' => "$CFG->yearprefix-$courseelpcode"));
+
+            $idnumberparts = explode('+', $courseidnumber);
+            $courseidnumber = $idnumberparts[0];
+        }
+
+        $idnumberparts2 = explode('-', $courseidnumber);
+        $courseelpcode = $idnumberparts2[2];
+        $availablecoursecohorts = $DB->get_records('local_cohortmanager_info',
+                array('codeelp' => "$CFG->yearprefix-$courseelpcode"));
 
         $mform =& $this->_form;
         $mform->addElement('header', 'generalheader', get_string('suggestedcohorts', 'block_mytermcourses'));
-        //~ $mform->addElement('static', 'cohortdef', '', '<p style="text-align:justify">'.get_string('cohortsare', 'block_mytermcourses').'</p>');
+        //~ $mform->addElement('static', 'cohortdef', '', '<p style="text-align:justify">'.
+        //get_string('cohortsare', 'block_mytermcourses').'</p>');
         if ($availablecoursecohorts) {
-			$mform->addElement('static', 'somecohorts', '', get_string('choosecohorts', 'block_mytermcourses'));
-		} else {
-			$mform->addElement('static', 'nocohort', '', get_string('noknowncohorts', 'block_mytermcourses'));
-		}
+
+            $mform->addElement('static', 'somecohorts', '', get_string('choosecohorts', 'block_mytermcourses'));
+        } else {
+
+            $mform->addElement('static', 'nocohort', '', get_string('noknowncohorts', 'block_mytermcourses'));
+        }
 
         $mform->addElement('hidden', 'id', $COURSE->id);
         $mform->setType('id', PARAM_INT);
 
-        foreach ($availablecoursecohorts as $availablecoursecohort) {			
-            $cohortlocalname = $DB->get_field('local_cohortmanager_names', 'cohortname', array('cohortid' => $availablecoursecohort->cohortid));
+        foreach ($availablecoursecohorts as $availablecoursecohort) {
+
+            $cohortlocalname = $DB->get_field('local_cohortmanager_names', 'cohortname',
+                    array('cohortid' => $availablecoursecohort->cohortid));
+
             if (!$cohortlocalname) {
-				$cohortlocalname = $DB->get_field('cohort', 'name', array('id' => $availablecoursecohort->cohortid));
-			}
+
+                $cohortlocalname = $DB->get_field('cohort', 'name', array('id' => $availablecoursecohort->cohortid));
+            }
+
             $cohortcode = $DB->get_field('cohort', 'idnumber', array('id' => $availablecoursecohort->cohortid));
+
             if ($availablecoursecohort->teacherid == $USER->id) {
+
                 $checked = 1;
             } else {
+
                 $checked = 0;
             }
+
             $boxid = "cohort$availablecoursecohort->cohortid";
             $mform->addElement('advcheckbox', $boxid, $cohortcode, $cohortlocalname);
             $mform->setType($boxid, PARAM_INT);
             $mform->setDefault($boxid, $checked);
         }
+
         $this->add_action_buttons();
-	}       
+    }
 }

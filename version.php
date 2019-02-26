@@ -21,9 +21,9 @@
  * 95011 Cergy-Pontoise cedex
  * FRANCE
  *
- * Displays the courses within which the user his enrolled, their categories, 
+ * Displays the courses within which the user his enrolled, their categories,
  * and their teachers. Courses open to all users are also displayed.
- * Courses are displayed on two columns, one for each term in the year. 
+ * Courses are displayed on two columns, one for each term in the year.
  * Teachers can move their courses to select the relevant column.
  *
  * @package    block_mytermcourses
@@ -32,9 +32,9 @@
  *
  * File : version.php
  * Version number
- * 
+ *
  */
 
-$plugin->version = 2018070600;
+$plugin->version = 2019022600;
 $plugin->requires = 2015051100;
 $plugin->component = 'block_mytermcourses';

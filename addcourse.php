@@ -62,43 +62,49 @@ require_capability('block/mytermcourses:createcourse', $sitecontext);
 
 // New category creation.
 if ($categoryparentid && $newcategoryname && confirm_sesskey()) {
-	$newcategoryidnumber = block_mytermcourses_idnumbercounter('category', $categoryparentid);
-	$newcategory = block_mytermcourses_createcategory($newcategoryname, $newcategoryidnumber, 'id', $categoryparentid);
+
+    $newcategoryidnumber = block_mytermcourses_idnumbercounter('category', $categoryparentid);
+    $newcategory = block_mytermcourses_createcategory($newcategoryname, $newcategoryidnumber, 'id', $categoryparentid);
 	$categoryid = $newcategory->id;
 }
 
 // New course creation (via pedagooffer).
 if ($courseparentid && $newcoursename && confirm_sesskey()) {
-	$courseidnumber = block_mytermcourses_idnumbercounter('course', $courseparentid);
-	$categoryid = $courseparentid;
-	$coursename = $newcoursename;
+
+    $courseidnumber = block_mytermcourses_idnumbercounter('course', $courseparentid);
+    $categoryid = $courseparentid;
+    $coursename = $newcoursename;
 }
 
 // New course creation (via availablecourses or pedagooffer).
 if ($courseidnumber && confirm_sesskey()) {
-	$category = $DB->get_record('course_categories', array('id' => $categoryid));
-	$newcourse = block_mytermcourses_createcourse($coursename, $courseidnumber, $categoryid);
+
+    $category = $DB->get_record('course_categories', array('id' => $categoryid));
+    $newcourse = block_mytermcourses_createcourse($coursename, $courseidnumber, $categoryid);
     header("Location: cohorts.php?id=$newcourse->id");
 }
 
 // Failed category creation.
 if ($categoryparentid && !$newcategoryname) {
-	echo "<p style='text-align:center;color:red'>".get_string('missingcategoryname', 'block_mytermcourses')."</p>";
-	$categoryid = $categoryparentid;
+
+    echo "<p style='text-align:center;color:red'>".get_string('missingcategoryname', 'block_mytermcourses')."</p>";
+    $categoryid = $categoryparentid;
 }
 
 // Failed course creation.
 if ($courseparentid && !$newcoursename) {
-	echo "<p style='text-align:center;color:red'>".get_string('missingcoursename', 'block_mytermcourses')."</p>";
-	$categoryid = $courseparentid;
+
+    echo "<p style='text-align:center;color:red'>".get_string('missingcoursename', 'block_mytermcourses')."</p>";
+    $categoryid = $courseparentid;
 }
 
 // Display a given course category.
 if ($categoryid) {
-	$category = $DB->get_record('course_categories', array('id' => $categoryid));
-	block_mytermcourses_choosecategory($category);
-	echo $OUTPUT->footer();
-	exit;
+
+    $category = $DB->get_record('course_categories', array('id' => $categoryid));
+    block_mytermcourses_choosecategory($category);
+    echo $OUTPUT->footer();
+    exit;
 }
 
 $availablevets = block_mytermcourses_availablevets();
@@ -106,9 +112,11 @@ $availablevets = block_mytermcourses_availablevets();
 if (isset ($CFG->yearprefix)) {
 
     $maincoursecategory = $DB->get_record('course_categories', array('idnumber' => $CFG->yearprefix));
+
     if ($maincoursecategory) {
 
         $maincategoryurl = "addcourse.php?category=$maincoursecategory->id";
+
         if (!count($availablevets)) {
 
             header("Location: $maincategoryurl&skip=1");
@@ -123,15 +131,19 @@ if (isset ($CFG->yearprefix)) {
     echo "<div id='availables' style='text-align:left'>";
     echo "<p style='font-size:18'>".get_string('createwhichcourse', 'block_mytermcourses')."</p>";
     $categorystyle = "text-align:left;font-weight:bold;padding:5px;color:white;background-color:gray;width:100%";
+
     foreach ($availablevets as $availablevet) {
 
         echo "<br><p style='$categorystyle'>$availablevet->vetname";
         echo "&nbsp; &nbsp;<span style='font-size:10'>($availablevet->vetcodeyear)</span></p>";
         block_mytermcourses_showavailablecourses($availablevet);
     }
+
     echo '<br>';
+    
     if ($maincoursecategory) {
-	    echo "<a class='btn btn-secondary' href='$maincategoryurl'>Mon cours n'est pas dans cette liste</a>";
+
+        echo "<a class='btn btn-secondary' href='$maincategoryurl'>Mon cours n'est pas dans cette liste</a>";
     }
 }
 

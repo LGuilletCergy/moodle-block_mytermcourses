@@ -43,9 +43,12 @@ require_login();
 // Header code.
 $moodlefilename = '/blocks/mytermcourses/oldcourses.php';
 $sitecontext = context_system::instance();
+
 if (!has_capability('block/mytermcourses:createcourse', $sitecontext)) {
-	$fetchedcourseid = 0;
+
+    $fetchedcourseid = 0;
 }
+
 $PAGE->set_context($sitecontext);
 $PAGE->set_url($moodlefilename);
 $title = get_string('pluginname', 'block_mytermcourses')." $oldyear";
@@ -69,23 +72,29 @@ $oldteachedcourses = explode('£µ£', $oldcourses[0]);
 $oldstudiedcourses = explode('£µ£', $oldcourses[1]);
 $oldadmincourses = explode('£µ£', $oldcourses[2]);
 
-$teacheroutput = trim(block_mytermcourses_oldcourses($oldteachedcourses, 'editingteacher', $fetchedcourseid, $connection));
+$teacheroutput = trim(block_mytermcourses_oldcourses($oldteachedcourses,
+        'editingteacher', $fetchedcourseid, $connection));
 $studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
 $adminoutput = trim(block_mytermcourses_oldcourses($oldadmincourses, 'appuiadmin', $fetchedcourseid, $connection));
 
 echo $OUTPUT->header();
+
 if ($teacheroutput) {
-	echo '<h3>'.get_string('teacheroldcourses', 'block_mytermcourses').'</h3>';
+
+    echo '<h3>'.get_string('teacheroldcourses', 'block_mytermcourses').'</h3>';
     echo "$teacheroutput<br>";
 }
 if ($adminoutput) {
-	echo '<h3>'.get_string('adminoldcourses', 'block_mytermcourses').'</h3>';
+
+    echo '<h3>'.get_string('adminoldcourses', 'block_mytermcourses').'</h3>';
     echo "$adminoutput<br>";
 }
 if ($studentoutput) {
+
     echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
     echo "$studentoutput<br>";
 }
+
 echo "<a href='$CFG->wwwroot/my'><button class='btn btn-primary'>".get_string('back')."</button></a>";
 echo $OUTPUT->footer();
 

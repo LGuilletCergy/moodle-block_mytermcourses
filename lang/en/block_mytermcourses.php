@@ -21,9 +21,9 @@
  * 95011 Cergy-Pontoise cedex
  * FRANCE
  *
- * Displays the courses within which the user his enrolled, their categories, 
+ * Displays the courses within which the user his enrolled, their categories,
  * and their teachers. Courses open to all users are also displayed.
- * Courses are displayed on two columns, one for each term in the year. 
+ * Courses are displayed on two columns, one for each term in the year.
  * Teachers can move their courses to select the relevant column.
  *
  * @package    block_mytermcourses
@@ -32,7 +32,7 @@
  *
  * File : lang/en/block_mytermcourses.php
  * English text strings
- * 
+ *
  */
 
 $string['pluginname'] = 'My term courses';
@@ -49,8 +49,11 @@ $string['commoncategories'] = 'Common categories';
 $string['notenrolled'] = 'You\'re not enrolled in any course';
 $string['firstterm'] = 'First term';
 $string['secondterm'] = 'Second term';
-$string['configidnumber_help'] = 'When displaying the courses, instead of sorting them by sortorder, sort them by idnumber.';
-$string['configcommon_help'] = 'Courses within theses categories will be displayed to all users, even if they are not enrolled in. You may want to make sure these courses are open to all users. Write categories ids, separated by ; symbols.';
+$string['configidnumber_help'] = 'When displaying the courses, instead of sorting them by sortorder,'
+        . ' sort them by idnumber.';
+$string['configcommon_help'] = 'Courses within theses categories will be displayed to all users,'
+        . ' even if they are not enrolled in. You may want to make sure these courses are open to all users.'
+        . ' Write categories ids, separated by ; symbols.';
 $string['addcourse'] = 'Add a new course';
 $string['myoldcourses'] = 'My old courses';
 $string['similarnewcourses'] = 'Already here';
@@ -70,9 +73,12 @@ $string['choosefaculty'] = 'Please choose a faculty';
 $string['chooselevel'] = 'Please choose a level';
 $string['choosetraining'] = 'Please choose a training';
 $string['suggestedcohorts'] = 'Suggested cohorts';
-$string['mutualchooseany'] = 'If the course you want to create is common to several of the above trainings, please click any of the relevant trainings';
-$string['categorynotfound'] = 'Can\'t find the category you\'re looking for ? You can create a new one. Please don\'t use this too often : it\'s better to create new categories in Apogée rather than here.';
-$string['coursenotfound'] = 'Can\'t find the course you\'re looking for ? You can create a new one. Please don\'t use this too often : it\'s better to create new courses in Apogée rather than here.';
+$string['mutualchooseany'] = 'If the course you want to create is common to several of the above trainings,'
+        . ' please click any of the relevant trainings';
+$string['categorynotfound'] = 'Can\'t find the category you\'re looking for ? You can create a new one.'
+        . ' Please don\'t use this too often : it\'s better to create new categories in Apogée rather than here.';
+$string['coursenotfound'] = 'Can\'t find the course you\'re looking for ? You can create a new one.'
+        . ' Please don\'t use this too often : it\'s better to create new courses in Apogée rather than here.';
 $string['createnewcategory'] = 'Create new category';
 $string['missingcategoryname'] = 'You must give a name to the category you want to create';
 $string['missingcoursename'] = 'You must give a name to the course you want to create';
@@ -81,8 +87,13 @@ $string['categoryplaceholder'] = 'Please choose carefully : you can\'t change th
 $string['courseplaceholder'] = '';
 $string['creatingcourse'] = 'Creating course';
 $string['incategory'] = 'in category';
-$string['cohortsare'] = 'Students cohorts are Apogée groups. If you tie a cohort to your course, any student added to the cohort (in Apogée) will be automatically added to the course.';
+$string['cohortsare'] = 'Students cohorts are Apogée groups. If you tie a cohort to your course,'
+        . ' any student added to the cohort (in Apogée) will be automatically added to the course.';
 $string['noknowncohorts'] = 'We don\'t have any information about cohorts you might want to tie to this course.';
-$string['choosecohorts'] = 'According to our knowledge, you could be interested in these cohorts. Please check there is no mistake.';
-$string['alllevelcohorts'] = 'Can\'t find the cohorts you\'re looking for ? Please click here for all the cohorts available in';
-$string['tryenroldemands'] = "Please check you are part of a cohort your teacher linked to this course. Or search the <a href='course/index.php'>courses list</a>. Maybe you can request for enrolment in this course (if your teacher enabled this possibility).";
+$string['choosecohorts'] = 'According to our knowledge, you could be interested in these cohorts.'
+        . ' Please check there is no mistake.';
+$string['alllevelcohorts'] = 'Can\'t find the cohorts you\'re looking for ?'
+        . ' Please click here for all the cohorts available in';
+$string['tryenroldemands'] = "Please check you are part of a cohort your teacher linked to this course."
+        . " Or search the <a href='course/index.php'>courses list</a>."
+        . " Maybe you can request for enrolment in this course (if your teacher enabled this possibility).";

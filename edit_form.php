@@ -23,7 +23,7 @@
  *
  * Displays the courses within which the user his enrolled, their categories,
  * and their teachers. Courses open to all users are also displayed.
- * Courses are displayed on two columns, one for each term in the year. 
+ * Courses are displayed on two columns, one for each term in the year.
  * Teachers can move their courses to select the relevant column.
  *
  * @package    block_mytermcourses
@@ -37,7 +37,9 @@
  */
 
 class block_mytermcourses_edit_form extends block_edit_form {
+
     protected function specific_definition($mform) {
+        
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_changetitle', get_string('changetitle', 'block_mytermcourses'));

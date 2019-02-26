@@ -40,8 +40,10 @@ $topcategory = $DB->get_record('course_categories', array('idnumber' => "$CFG->y
 
 require_login();
 $sitecontext = context_system::instance();
+
 if (!has_capability('block/mytermcourses:fetcholdcategory', $sitecontext)) {
-	header("Location: $CFG->wwwroot/my/index.php");
+
+    header("Location: $CFG->wwwroot/my/index.php");
 }
 
 // Header code.
@@ -68,64 +70,86 @@ $oldcourses = explode('£µ£', $updatedcourselist);
 //~ print_object($oldcourses); exit;
 
 echo $OUTPUT->header();
+
 $i = 0;
 $j = 0;
+
 foreach ($oldcourses as $oldcourse) {
-	$oldcoursearray = explode(';', $oldcourse);
-	if (count($oldcoursearray)) {
-	    $idnumber = array_shift($oldcoursearray);
+
+    $oldcoursearray = explode(';', $oldcourse);
+
+    if (count($oldcoursearray)) {
+
+        $idnumber = array_shift($oldcoursearray);
         $newcourse = $DB->get_record('course', array('idnumber' =>  $idnumber));
         if ($newcourse) {
-			enroladminsupports($newcourse, $oldcoursearray);
+
+            enroladminsupports($newcourse, $oldcoursearray);
             $j++;
-		}
-	}
-	$i++;
+        }
+    }
+
+    $i++;
 }
+
 echo "<h3>$i cours dans la liste, $j traités.</h3>";
 echo $OUTPUT->footer();
 
 function enroladminsupports($course, $usernames) {
+
     global $DB, $USER;
     $now = time();
     $coursecontext = $DB->get_record('context', array('instanceid' => $course->id, 'contextlevel' => 50));
     $sitecontextid = 1;
     $manualenrol = $DB->get_record('enrol', array('enrol' => 'manual', 'courseid' => $course->id));
+
     foreach ($usernames as $username) {
-		$user = $DB->get_record('user', array('username' => $username));
-		if ($user) {
-			//On vérifie que cet utilisateur fait bien partie du personnel de l'établissement.
-			$staff = $DB->get_record('role_assignments', array('contextid' => $sitecontextid, 'userid' => $user->id, 'roleid' => 11));
-			//role 11 : Personnel de l'établissement
-			//role 12 : Appui administratif			
-			if ($staff) {
-				$userenrolment = $DB->get_record('user_enrolments', array('enrolid' => $manualenrol->id, 'userid' => $user->id));
-			    if (!$userenrolment) {
-				    $userenrolment = new stdClass();
-				    $userenrolment->status = 0;
-				    $userenrolment->enrolid = $manualenrol->id;
-				    $userenrolment->userid = $user->id;
-				    $userenrolment->timestart = $now;
-				    $userenrolment->timeend = 0;
-				    $userenrolment->modifierid = $USER->id;
-				    $userenrolment->timecreated = $now;
-				    $userenrolment->timemodified = $now;
-				    $userenrolment->id = $DB->insert_record('user_enrolments', $userenrolment);
-				    print_object($userenrolment);
-			    }
-			    $adminsupport = $DB->get_record('role_assignments', array('contextid' => $coursecontext->id, 'userid' => $user->id, 'roleid' => 12));
-			    if (!$adminsupport) {
-				    $adminsupport = new stdClass();
-				    $adminsupport->roleid = 12;
-				    $adminsupport->contextid = $coursecontext->id;
-				    $adminsupport->userid = $user->id;
-				    $adminsupport->timemodified = $now;
-				    $adminsupport->modifierid = $USER->id;
-				    $adminsupport->id = $DB->insert_record('role_assignments', $adminsupport);
-				    print_object($adminsupport);
-			    }
-		    }
-	    }
-	}
+
+        $user = $DB->get_record('user', array('username' => $username));
+
+        if ($user) {
+
+            //On vérifie que cet utilisateur fait bien partie du personnel de l'établissement.
+            $staff = $DB->get_record('role_assignments',
+                    array('contextid' => $sitecontextid, 'userid' => $user->id, 'roleid' => 11));
+            //role 11 : Personnel de l'établissement
+            //role 12 : Appui administratif
+            if ($staff) {
+
+                $userenrolment = $DB->get_record('user_enrolments',
+                        array('enrolid' => $manualenrol->id, 'userid' => $user->id));
+
+                if (!$userenrolment) {
+
+                    $userenrolment = new stdClass();
+                    $userenrolment->status = 0;
+                    $userenrolment->enrolid = $manualenrol->id;
+                    $userenrolment->userid = $user->id;
+                    $userenrolment->timestart = $now;
+                    $userenrolment->timeend = 0;
+                    $userenrolment->modifierid = $USER->id;
+                    $userenrolment->timecreated = $now;
+                    $userenrolment->timemodified = $now;
+                    $userenrolment->id = $DB->insert_record('user_enrolments', $userenrolment);
+                    print_object($userenrolment);
+                }
+
+                $adminsupport = $DB->get_record('role_assignments',
+                        array('contextid' => $coursecontext->id, 'userid' => $user->id, 'roleid' => 12));
+
+                if (!$adminsupport) {
+
+                    $adminsupport = new stdClass();
+                    $adminsupport->roleid = 12;
+                    $adminsupport->contextid = $coursecontext->id;
+                    $adminsupport->userid = $user->id;
+                    $adminsupport->timemodified = $now;
+                    $adminsupport->modifierid = $USER->id;
+                    $adminsupport->id = $DB->insert_record('role_assignments', $adminsupport);
+                    print_object($adminsupport);
+                }
+            }
+        }
+    }
     //~ exit;
 }

@@ -40,8 +40,10 @@ $topcategory = $DB->get_record('course_categories', array('idnumber' => "$CFG->y
 
 require_login();
 $sitecontext = context_system::instance();
+
 if (!has_capability('block/mytermcourses:fetcholdcategory', $sitecontext)) {
-	header("Location: $CFG->wwwroot/my/index.php");
+
+    header("Location: $CFG->wwwroot/my/index.php");
 }
 
 // Header code.
@@ -67,14 +69,19 @@ $oldcourses = explode('£µ£', $updatedcourselist);
 
 echo $OUTPUT->header();
 $i = 0;
+
 foreach ($oldcourses as $oldcourse) {
-	$oldcoursearray = explode(';', $oldcourse);
-	array_pop($oldcoursearray);
-	if (end($oldcoursearray) == "Y2018-$topidnumber") {
-		print_object($oldcoursearray);
-	    block_mytermcourses_readoldcourseline($oldcoursearray, $topcategory);
-	}
-	$i++;
+
+    $oldcoursearray = explode(';', $oldcourse);
+    array_pop($oldcoursearray);
+
+    if (end($oldcoursearray) == "Y2018-$topidnumber") {
+
+        print_object($oldcoursearray);
+        block_mytermcourses_readoldcourseline($oldcoursearray, $topcategory);
+    }
+    
+    $i++;
 }
 echo "<h3>$i</h3>";
 echo $OUTPUT->footer();
