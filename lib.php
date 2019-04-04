@@ -502,7 +502,7 @@ function block_mytermcourses_tryidnumber($table, $triedidnumber, $i) {
     }
 }
 
-function block_mytermcourse_tryshortname ($coursename, $i) {
+function block_mytermcourses_tryshortname ($coursename, $i) {
 
     global $DB;
 
@@ -517,7 +517,7 @@ function block_mytermcourse_tryshortname ($coursename, $i) {
 
     if ($already) {
 
-        return block_mytermcourse_tryshortname($newshortname, $i + 1);
+        return block_mytermcourses_tryshortname($newshortname, $i + 1);
     } else {
 
         return $newshortname;
