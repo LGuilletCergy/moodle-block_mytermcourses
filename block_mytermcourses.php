@@ -49,7 +49,7 @@ class block_mytermcourses extends block_base {
     }
 
     public function get_content() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
 
         if ($this->content !== null) {
@@ -189,12 +189,6 @@ class block_mytermcourses extends block_base {
 
         global $DB;
 
-        //~ if ($this->config->idnumber) {
-            //~ $criterium = 'idnumber';
-        //~ } else {
-            //~ $criterium = 'sortorder';
-        //~ }
-
         $categories = array();
 
         foreach ($categoriesid as $categoryid) {
@@ -219,7 +213,8 @@ class block_mytermcourses extends block_base {
 
             $category = $DB->get_record('course_categories', array('id' => $categoryid));
             /**
-             * S'il y a un espace personnel, les espaces collaboratifs ne seront pas affichés (on ne veut pas d'étudiants dans les espaces collaboratifs).
+             * S'il y a un espace personnel, les espaces collaboratifs ne seront pas affichés
+             * (on ne veut pas d'étudiants dans les espaces collaboratifs).
              */
 
             if (($idnumber == 'COLLAB')||($idnumber == 'PERSO')) {
@@ -251,38 +246,7 @@ class block_mytermcourses extends block_base {
         return $categories;
     }
 
-    public function preparecolumns($category, $courses) {
-
-        global $DB;
-
-        $columns = array();
-        $columns[0] = array();
-        $columns[1] = array();
-        reset($courses);
-
-        foreach ($courses as $course) {
-
-            if ($course->category == $category->id) {
-
-                $right = $DB->record_exists('block_mytermcourses_col',
-                        array('courseid' => $course->id, 'position' => 2));
-
-                if ($right) {
-
-                    array_push($columns[1], $course);
-                } else {
-
-                    array_push($columns[0], $course);
-                }
-            }
-        }
-
-        return $columns;
-    }
-
     public function displaycourses($courses, $category) {
-
-        global $PAGE;
 
         $this->content->text .= '<div style="overflow:auto">';
 
@@ -298,65 +262,15 @@ class block_mytermcourses extends block_base {
         $this->content->text .= '<br><br>';
     }
 
-    public function displaylogo($category) {
-
-        global $DB;
-
-        $logofile = 'logoucp.png';
-        $logos = array('7' => 'logoscpo.png', '12' => 'logiut.png', '13' => 'logoespe.png');
-        $parentcategory = $DB->get_record('course_categories', array('id' => $category->parent));
-
-        if ($parentcategory) {
-
-            if (isset($logos[$parentcategory->parent])) {
-
-                $logofile = $logos[$parentcategory->parent];
-            }
-        }
-        $this->content->text .= "<p style='margin-top:-45px;text-align:right'>"
-                . "<img src='$CFG->wwwroot/$logofile' style='width:130px'></p>";
-    }
-
-    public function courseprogress($course) {
-
-        global $USER;
-
-        $completion = new \completion_info($course);
-
-        if (!$completion->is_enabled()) {
-
-            return null;
-        }
-
-        $percentage = progress::get_course_progress_percentage($course);
-
-        if (!is_null($percentage)) {
-
-            $percentage = floor($percentage);
-        }
-
-        $courseprogress = array();
-        $courseprogress['completed'] = $completion->is_course_complete($USER->id);
-        $courseprogress['progress'] = $percentage;
-
-        return $courseprogress;
-    }
-
     public function specialization() {
 
         global $CFG;
         $currentyear = $CFG->thisyear.'-'.($CFG->thisyear + 1);
         $this->title = get_string('pluginname', 'block_mytermcourses')." $currentyear";
-        //~ if (isset($this->config)) {
-            //~ if (empty($this->config->changetitle)) {
-                //~ $this->title = get_string('mytermcourses', 'block_mytermcourses');
-            //~ } else {
-                //~ $this->title = $this->config->changetitle;
-            //~ }
-        //~ }
     }
 
     public function has_config() {
+
         return true;
     }
 }

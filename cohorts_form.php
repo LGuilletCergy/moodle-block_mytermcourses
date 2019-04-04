@@ -48,7 +48,6 @@ class block_mytermcourses_cohorts_form extends moodleform {
 
         $courseidnumber = $COURSE->idnumber;
         $coursecategory = $DB->get_record('course_categories', array('id' => $COURSE->category));
-        $levelcategory =  $DB->get_record('course_categories', array('id' => $coursecategory->parent));
 
         if (strpos($courseidnumber, '+')) {
 

@@ -109,11 +109,12 @@ function enroladminsupports($course, $usernames) {
 
         if ($user) {
 
+            $localstaffid = $DB->get_record('role', array('shortname' => 'localstaff'))->id;
+            $administrativeid = $DB->get_record('role', array('shortname' => 'appuiadmin'))->id;
+
             //On vérifie que cet utilisateur fait bien partie du personnel de l'établissement.
             $staff = $DB->get_record('role_assignments',
-                    array('contextid' => $sitecontextid, 'userid' => $user->id, 'roleid' => 11));
-            //role 11 : Personnel de l'établissement
-            //role 12 : Appui administratif
+                    array('contextid' => $sitecontextid, 'userid' => $user->id, 'roleid' => $localstaffid));
             if ($staff) {
 
                 $userenrolment = $DB->get_record('user_enrolments',
@@ -135,12 +136,12 @@ function enroladminsupports($course, $usernames) {
                 }
 
                 $adminsupport = $DB->get_record('role_assignments',
-                        array('contextid' => $coursecontext->id, 'userid' => $user->id, 'roleid' => 12));
+                        array('contextid' => $coursecontext->id, 'userid' => $user->id, 'roleid' => $administrativeid));
 
                 if (!$adminsupport) {
 
                     $adminsupport = new stdClass();
-                    $adminsupport->roleid = 12;
+                    $adminsupport->roleid = $administrativeid;
                     $adminsupport->contextid = $coursecontext->id;
                     $adminsupport->userid = $user->id;
                     $adminsupport->timemodified = $now;

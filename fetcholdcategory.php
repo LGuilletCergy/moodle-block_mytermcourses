@@ -75,12 +75,12 @@ foreach ($oldcourses as $oldcourse) {
     $oldcoursearray = explode(';', $oldcourse);
     array_pop($oldcoursearray);
 
-    if (end($oldcoursearray) == "Y2018-$topidnumber") {
+    if (end($oldcoursearray) == "$CFG->yearprefix-$topidnumber") {
 
         print_object($oldcoursearray);
         block_mytermcourses_readoldcourseline($oldcoursearray, $topcategory);
     }
-    
+
     $i++;
 }
 echo "<h3>$i</h3>";

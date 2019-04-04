@@ -43,6 +43,7 @@ function block_mytermcourses_createcourse($coursename, $courseidnumber, $categor
 
     $firstcourseidnumber = $courseidnumber;
     $courseidnumber = block_mytermcourses_tryidnumber('course', $courseidnumber, 0);
+    $courseshortname = block_mytermcourses_tryshortname($coursename, 0);
     $rolelocalstaff = $DB->get_record('role', array('shortname' => 'localstaff'));
     $rolelocalteacher = $DB->get_record('role', array('shortname' => 'localteacher'));
     $roleeditingteacher = $DB->get_record('role', array('shortname' => 'editingteacher'));
@@ -60,20 +61,7 @@ function block_mytermcourses_createcourse($coursename, $courseidnumber, $categor
 
     $coursedata = new stdClass;
     $coursedata->fullname = $coursename;
-    $shortnametaken = $DB->record_exists('course', array('shortname' => $coursename));
-    if ($shortnametaken) {
-
-        $coursedata->shortname = $courseidnumber;
-    } else if ($firstcourseidnumber == $courseidnumber) {
-
-        $coursedata->shortname = $coursename;
-    } else {
-
-        $idnumberparts = explode('+', $courseidnumber);
-        $i = $idnumberparts[1];
-        $coursedata->shortname = $coursename." ($i)";
-    }
-
+    $coursedata->shortname = $courseshortname;
     $coursedata->category = $categoryid;
     $coursedata->idnumber = $courseidnumber;
     $coursedata->format = 'topics';
@@ -107,9 +95,16 @@ function block_mytermcourses_createcourse($coursename, $courseidnumber, $categor
 
 function block_mytermcourses_createsections($newcourse, $newcontext) {
 
-    global $DB;
+    global $CFG, $DB;
 
-    $specialcontexts = array(4510 => array('DESCRIPTION DU COURS', 'PLAN DE COURS', 'FICHES TD',
+    $specialcategoryidnumber = $CFG->yearprefix."-1";
+
+    $specialcategoryid = $DB->get_record('course_categories', array('idnumber' => $specialcategoryidnumber))->id;
+
+    $specialcontextid = $DB->get_record('context',
+            array('contextlevel' => CONTEXT_COURSECAT, 'instanceid' => $specialcategoryid))->id;
+
+    $specialcontexts = array($specialcontextid => array('DESCRIPTION DU COURS', 'PLAN DE COURS', 'FICHES TD',
         'INFORMATIONS GENERALES', 'SUPPORT ET NOTES DE COURS'));
     $newcontextpath = explode('/', $newcontext->path);
     $closestcontextid = 0;
@@ -320,8 +315,10 @@ function block_mytermcourses_newcourses($newcourseidnumber) {
 
 function block_mytermcourses_newname($oldname) {
 
+    global $CFG;
+
     $oldyear = 'Y2017-';
-    $newyear = 'Y2018-';
+    $newyear = $CFG->yearprefix.'-';
     $length = strlen($oldyear);
     $oldyearposition = strpos($oldname, $oldyear);
 
@@ -338,6 +335,8 @@ function block_mytermcourses_newname($oldname) {
 
 function block_mytermcourses_newidnumber($oldidnumber) {
 
+    global $CFG;
+
     if (strpos($oldidnumber, '+')) {
 
         $idnumbertable = explode('+', $oldidnumber);
@@ -345,7 +344,7 @@ function block_mytermcourses_newidnumber($oldidnumber) {
     }
     if (substr($oldidnumber, 0, 6) == 'Y2017-') {
 
-        $newidnumber = substr_replace($oldidnumber, 'Y2018', 0, 5);
+        $newidnumber = substr_replace($oldidnumber, $CFG->yearprefix, 0, 5);
 
         if ((substr($newidnumber, -1, 1) == 'A') && (substr($newidnumber, -3, 1) == '-')) {
 
@@ -382,21 +381,6 @@ function block_mytermcourses_createcategory($name, $idnumber, $parentfield, $par
         return null;
     }
 }
-
-//~ function block_mytermcourses_createnewcategory($parentid, $newname) {
-	//~ global $CFG, $DB;
-	//~ $parentcategory = $DB->get_record('course_categories', array('id' => $parentid));
-	//~ $grandparentcategory = $DB->get_record('course_categories', array('id' => $parentcategory->parent));
-	//~ $blockdir = "$CFG->dirroot/blocks/mytermcourses";
-	//~ $counterfile = "$blockdir/vetcompteur";
-	//~ $nextvet = system("cat $counterfile");
-    //~ $command = "echo '".($nextvet+1)."' > $counterfile";
-    //~ system($command);
-    //~ $idnumber = $grandparentcategory->idnumber.$CFG->thisyear."V".$nextvet;
-    //~ $categorydata = array('name' => $newname, 'idnumber' => $idnumber, 'parent' => $parentid, 'visible' => 1);
-    //~ $newcategory = coursecat::create($categorydata);
-	//~ return $newcategory;
-//~ }
 
 function block_mytermcourses_idnumbercounter($nature, $parentid) {
 
@@ -438,17 +422,17 @@ function block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcour
     global $CFG, $DB;
 
     $unmarkcommand = "php /var/www/moodle/enp17unmark.php $fetchedcourseid";
-    $unmarkstream = ssh2_exec($connection, $unmarkcommand);
+    ssh2_exec($connection, $unmarkcommand);
     $backupcommand = "cd /var/www/moodle && moosh -n course-backup -f "
             . "/var/movingcourses/course$fetchedcourseid.mbz $fetchedcourseid";
-    $backupstream = ssh2_exec($connection, $backupcommand);
+    ssh2_exec($connection, $backupcommand);
     $fetchcommand = "scp enp17@enp16.u-cergy.fr:/var/movingcourses/course$fetchedcourseid.mbz /var/enp16courses";
     $retry = 1;
     $tries = 0;
 
     while ($retry && $tries < 50) {    // Retry fetching if it didn't work, but not more than 50 times.
 
-        $fetchoutput = system($fetchcommand, $retry);
+        system($fetchcommand, $retry);
         $tries++;
     }
 
@@ -518,11 +502,32 @@ function block_mytermcourses_tryidnumber($table, $triedidnumber, $i) {
     }
 }
 
+function block_mytermcourse_tryshortname ($coursename, $i) {
+
+    global $DB;
+
+    $newshortname = $coursename;
+
+    if ($i) {
+
+        $newshortname .= "_$i";
+    }
+
+    $already = $DB->record_exists('course', array('shortname' => $newshortname));
+
+    if ($already) {
+
+        return block_mytermcourse_tryshortname($newshortname, $i + 1);
+    } else {
+
+        return $newshortname;
+    }
+}
+
 function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnumber) {
 
     global $DB;
 
-    //~ New course ID for 'Y2017-Histoire romaine L2_10': 1844 in category 3433
     $titleandids = explode(':', $restoretable[1]);
     $idtable = explode(' ', $titleandids[1]);
     $first = substr($idtable[1], 0, 1);
@@ -585,16 +590,12 @@ function block_mytermcourses_enrolcreator($courseid) {
 
 function block_mytermcourses_displaycourse($course) {
 
-    global $CFG, $DB, $PAGE, $USER;
+    global $CFG;
 
     $coursewidth = 280;
     $courseheight = 160;
     $coursestyle = 'border:1px solid gray;margin:10px;float:left;padding:10px;border-radius:5px;overflow:hidden';
     $courseurl = $CFG->wwwroot.'/course/view.php?id='.$course->id;
-    $coursecontextid = $DB->get_field('context', 'id',
-            array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $course->id));
-    $teacherassignments = $DB->get_records('role_assignments', array('roleid' => 3, 'contextid' => $coursecontextid));
-    $nbteachers = count($teacherassignments);
 
     if ($course->visible) {
 
@@ -604,14 +605,8 @@ function block_mytermcourses_displaycourse($course) {
         $hiddencolor = 'color:gray';
     }
 
-    //~ $title = addslashes(block_mytermcourses_coursesummary($course));
     $html = "<div style='width:$coursewidth;height:$courseheight;$coursestyle' class='coursecard'>";
     $html .= "<div style='overflow:hidden'>";
-    //~ if ($course->shortname) {
-            //~ $coursename = $course->shortname;
-    //~ } else {
-            //~ $coursename = $course->fullname;
-    //~ }
     $coursename = $course->fullname;
     $html .= "<a style='font-weight:bold;font-size:16;$hiddencolor' href='$courseurl'>$coursename</a>";
     $html .= "<div style='font-size:10;margin:5px;margin-left:5px;float:right'>$course->idnumber</div>";
@@ -949,7 +944,12 @@ function block_mytermcourses_choosecategory($upcategory) {
             $haschildren = $DB->record_exists('course_categories', array('parent' => $firstcategory->id));
             echo $OUTPUT->header();
 
-	    if ($upcategory->id == 3153) {
+            $specialcategoryidnumber = $CFG->yearprefix."-1";
+
+            $specialcategoryid = $DB->get_record('course_categories',
+                    array('idnumber' => $specialcategoryidnumber))->id;
+
+	    if ($upcategory->id == $specialcategoryid) {
 
                 echo "<p><span style='font-weight:bold;color:red'>Attention : Les cours sont créés par"
                 . " les gestionnaires administratifs de l'UFR Droit. ".
@@ -1062,7 +1062,8 @@ function block_mytermcourses_choosecourse($category) {
             echo "<button class='btn btn-secondary' onclick='block_mytermcourses_newcourses(\"$coursecodeyear\")'>"
                 .get_string('alreadycreated', 'block_mytermcourses')."</button>";
             echo '&nbsp;';
-            echo "<button class='btn btn-secondary' onclick='block_mytermcourses_again(\"$coursecodeyear\")'>".get_string('createagain', 'block_mytermcourses')."</button>";
+            echo "<button class='btn btn-secondary' onclick='block_mytermcourses_again(\"$coursecodeyear\")'>".
+                    get_string('createagain', 'block_mytermcourses')."</button>";
             echo '<br><br>';
             echo "<div style='display:none' id='again$coursecodeyear'>$againconfirm</div>";
             echo "<div style='display:none' id='sim$coursecodeyear'>$alreadycoursesgroup</div>";
@@ -1074,13 +1075,9 @@ function block_mytermcourses_choosecourse($category) {
     }
 }
 
-function block_mytermcourses_enroladminsupport($oldcoursearray, $parentcategoryid) {
-    //TODO
-}
-
 function block_mytermcourses_readoldcourseline($oldcoursearray, $parentcategoryid) {
 
-    global $DB;
+    global $DB, $CFG;
 
     $nbcells = count($oldcoursearray);
 
@@ -1108,9 +1105,9 @@ function block_mytermcourses_readoldcourseline($oldcoursearray, $parentcategoryi
         $categoryidnumber = array_pop($oldcoursearray);
         $categoryname = array_pop($oldcoursearray);
 
-        if ($categoryidnumber == 'Y2018-1A') {
+        if ($categoryidnumber == $CFG->yearprefix.'-1A') {
 
-            $categoryidnumber = 'Y2018-1AU';
+            $categoryidnumber = $CFG->yearprefix.'-1AU';
         }
 
         $already = $DB->get_record('course_categories', array('idnumber' => $categoryidnumber));
