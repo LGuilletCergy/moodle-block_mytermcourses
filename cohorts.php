@@ -61,9 +61,6 @@ $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
 $category = $DB->get_record('course_categories', array('id' => $course->category));
 $levelcategory = $DB->get_record('course_categories', array('id' => $category->parent));
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('creatingcourse', 'block_mytermcourses').' '.$course->fullname);
-echo '<p>'.get_string('incategory', 'block_mytermcourses').' '.$category->name.'</p>';
 $mform = new block_mytermcourses_cohorts_form();
 
 if ($mform->is_cancelled()) {
@@ -96,6 +93,10 @@ if ($mform->is_cancelled()) {
 
     redirect($courseurl);
 } else {
+
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('creatingcourse', 'block_mytermcourses').' '.$course->fullname);
+    echo '<p>'.get_string('incategory', 'block_mytermcourses').' '.$category->name.'</p>';
 
     echo '<p style="text-align:justify">'.get_string('cohortsare', 'block_mytermcourses').'</p>';
     $mform->display();
