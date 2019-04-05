@@ -68,41 +68,43 @@ $courseliststreamout = ssh2_fetch_stream($courseliststream, SSH2_STREAM_STDIO);
 $courselist = stream_get_contents($courseliststreamout);
 $oldcourses = explode('£§£', $courselist);
 
+echo $OUTPUT->header();
+
 if (isset($oldcourses[0])) {
 
     $oldteachedcourses = explode('£µ£', $oldcourses[0]);
     $teacheroutput = trim(block_mytermcourses_oldcourses($oldteachedcourses,
         'editingteacher', $fetchedcourseid, $connection));
-}
 
-if (isset($oldcourses[1])) {
+    if ($teacheroutput) {
 
-    $oldstudiedcourses = explode('£µ£', $oldcourses[1]);
-    $studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
+        echo '<h3>'.get_string('teacheroldcourses', 'block_mytermcourses').'</h3>';
+        echo "$teacheroutput<br>";
+    }
 }
 
 if (isset($oldcourses[2])) {
 
     $oldadmincourses = explode('£µ£', $oldcourses[2]);
     $adminoutput = trim(block_mytermcourses_oldcourses($oldadmincourses, 'appuiadmin', $fetchedcourseid, $connection));
+
+    if ($adminoutput) {
+
+        echo '<h3>'.get_string('adminoldcourses', 'block_mytermcourses').'</h3>';
+        echo "$adminoutput<br>";
+    }
 }
 
-echo $OUTPUT->header();
+if (isset($oldcourses[1])) {
 
-if ($teacheroutput) {
+    $oldstudiedcourses = explode('£µ£', $oldcourses[1]);
+    $studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
 
-    echo '<h3>'.get_string('teacheroldcourses', 'block_mytermcourses').'</h3>';
-    echo "$teacheroutput<br>";
-}
-if ($adminoutput) {
+    if ($studentoutput) {
 
-    echo '<h3>'.get_string('adminoldcourses', 'block_mytermcourses').'</h3>';
-    echo "$adminoutput<br>";
-}
-if ($studentoutput) {
-
-    echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
-    echo "$studentoutput<br>";
+        echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
+        echo "$studentoutput<br>";
+    }
 }
 
 echo "<a href='$CFG->wwwroot/my'><button class='btn btn-primary'>".get_string('back')."</button></a>";
