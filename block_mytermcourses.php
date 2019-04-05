@@ -113,9 +113,11 @@ class block_mytermcourses extends block_base {
                     $yearcategory = false;
                 }
 
-                if ($this->config->common) {
+                $commoncategoriessettings = get_config('mytermcourses', 'Common_categories');
 
-                    $commoncategoriesid = explode(';', $this->config->common);
+                if ($commoncategoriessettings) {
+
+                    $commoncategoriesid = explode(';', $commoncategoriessettings);
 
                     if ($yearcategory && !in_array($category->id, $commoncategoriesid)) {
 
@@ -165,9 +167,9 @@ class block_mytermcourses extends block_base {
 
         reset($courses);
         // Common categories.
-        if ($this->config->common) {
+        if ($commoncategoriessettings) {
 
-            $commoncategoriesid = explode(';', $this->config->common);
+            $commoncategoriesid = explode(';', $commoncategoriessettings);
             $commoncategories = $this->sortcategories($commoncategoriesid);
             foreach ($commoncategories as $commoncategory) {
 

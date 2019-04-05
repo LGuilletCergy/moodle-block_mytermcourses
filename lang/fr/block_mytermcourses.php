@@ -48,12 +48,6 @@ $string['commoncategories'] = 'Catégories communes';
 $string['notenrolled'] = "Vous n'êtes inscrit à aucun cours";
 $string['firstterm'] = 'Premier semestre';
 $string['secondterm'] = 'Second semestre';
-$string['configidnumber'] = 'le tri des cours par idnumber';
-$string['configidnumber_help'] = 'Pour afficher les cours, les trier par idnumber et pas par sortorder.';
-$string['configcommon'] = 'les catégories communes';
-$string['configcommon_help'] = 'Les cours de ces catégories seront affichés pour tous les utilisateurs.'
-        . ' Vous voudrez certainement vous assurer que ces cours sont bien ouverts aux utilisateurs non inscrits.'
-        . ' Ecrire les id des catégories, avec des symboles ; pour les séparer.';
 $string['addcourse'] = "Ajout d'un nouveau cours";
 $string['myoldcourses'] = 'Mes anciens cours';
 $string['similarnewcourses'] = 'Déjà récupéré';

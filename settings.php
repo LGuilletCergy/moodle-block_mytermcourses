@@ -30,29 +30,15 @@
  * @author     Brice Errandonea <brice.errandonea@u-cergy.fr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
- * File : edit_form.php
+ * File : settings.php
  *
- * Block configuration form.
+ * Settings file
  *
  */
 
-class block_mytermcourses_edit_form extends block_edit_form {
-
-    protected function specific_definition($mform) {
-
-        $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
-
-        $mform->addElement('text', 'config_changetitle', get_string('changetitle', 'block_mytermcourses'));
-        $mform->setDefault('config_changetitle', $this->block->title);
-        $mform->setType('config_changetitle', PARAM_RAW);
-
-        $mform->addElement('selectyesno', 'config_idnumber', get_string('useidnumber', 'block_mytermcourses'));
-        $mform->addHelpButton('config_idnumber', 'configidnumber', 'block_mytermcourses');
-        $mform->setDefault('config_idnumber', 'no');
-
-        $mform->addElement('text', 'config_common', get_string('commoncategories', 'block_mytermcourses'));
-        $mform->setDefault('config_common', '');
-        $mform->addHelpButton('config_common', 'configcommon', 'block_mytermcourses');
-        $mform->setType('config_common', PARAM_RAW);
-    }
-}
+$settings->add(new admin_setting_configtext(
+            'mytermcourses/Common_categories',
+            get_string('commoncategories', 'block_mytermcourses'),
+            get_string('commoncategories', 'block_mytermcourses'),
+            '0'
+        ));
