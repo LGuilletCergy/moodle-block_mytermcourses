@@ -166,7 +166,11 @@ class block_mytermcourses extends block_base {
         }
 
         reset($courses);
+
         // Common categories.
+
+        $commoncategoriessettings = get_config('mytermcourses', 'Common_categories');
+
         if ($commoncategoriessettings) {
 
             $commoncategoriesid = explode(';', $commoncategoriessettings);
