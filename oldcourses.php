@@ -68,14 +68,24 @@ $courseliststreamout = ssh2_fetch_stream($courseliststream, SSH2_STREAM_STDIO);
 $courselist = stream_get_contents($courseliststreamout);
 $oldcourses = explode('£§£', $courselist);
 
-$oldteachedcourses = explode('£µ£', $oldcourses[0]);
-$oldstudiedcourses = explode('£µ£', $oldcourses[1]);
-$oldadmincourses = explode('£µ£', $oldcourses[2]);
+if (isset($oldcourses[0])) {
 
-$teacheroutput = trim(block_mytermcourses_oldcourses($oldteachedcourses,
+    $oldteachedcourses = explode('£µ£', $oldcourses[0]);
+    $teacheroutput = trim(block_mytermcourses_oldcourses($oldteachedcourses,
         'editingteacher', $fetchedcourseid, $connection));
-$studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
-$adminoutput = trim(block_mytermcourses_oldcourses($oldadmincourses, 'appuiadmin', $fetchedcourseid, $connection));
+}
+
+if (isset($oldcourses[1])) {
+
+    $oldstudiedcourses = explode('£µ£', $oldcourses[1]);
+    $studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
+}
+
+if (isset($oldcourses[2])) {
+
+    $oldadmincourses = explode('£µ£', $oldcourses[2]);
+    $adminoutput = trim(block_mytermcourses_oldcourses($oldadmincourses, 'appuiadmin', $fetchedcourseid, $connection));
+}
 
 echo $OUTPUT->header();
 
