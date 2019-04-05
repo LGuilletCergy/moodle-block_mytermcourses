@@ -48,10 +48,10 @@ class block_mytermcourses_edit_form extends block_edit_form {
 
         $mform->addElement('selectyesno', 'config_idnumber', get_string('useidnumber', 'block_mytermcourses'));
         $mform->addHelpButton('config_idnumber', 'configidnumber', 'block_mytermcourses');
-        $mform->setDefault('config_idnumber', $this->config->idnumber);
+        $mform->setDefault('config_idnumber', 'no');
 
         $mform->addElement('text', 'config_common', get_string('commoncategories', 'block_mytermcourses'));
-        $mform->setDefault('config_common', $this->config->common);
+        $mform->setDefault('config_common', '');
         $mform->addHelpButton('config_common', 'configcommon', 'block_mytermcourses');
         $mform->setType('config_common', PARAM_RAW);
     }
