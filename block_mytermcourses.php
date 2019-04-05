@@ -171,25 +171,28 @@ class block_mytermcourses extends block_base {
             $commoncategories = $this->sortcategories($commoncategoriesid);
             foreach ($commoncategories as $commoncategory) {
 
-                $commoncourses = $DB->get_records('course', array('category' => $commoncategory->id));
-                if (!$commoncourses) {
+                if (isset($commoncategory->id)) {
 
-                    continue;
-                }
-
-                foreach ($commoncourses as $commoncourse) {
-
-                    // Only get courses with guest access enabled.
-                    $guestenrol = $DB->get_record('enrol', array('enrol' => 'guest', 'courseid' => $commoncourse->id));
-
-                    if ($guestenrol->status) { // status = 1 means 'disabled method'.
+                    $commoncourses = $DB->get_records('course', array('category' => $commoncategory->id));
+                    if (!$commoncourses) {
 
                         continue;
                     }
 
-                    if (!in_array($commoncourse->id, $courseids)) {
+                    foreach ($commoncourses as $commoncourse) {
 
-                        $courses[] = $commoncourse;
+                        // Only get courses with guest access enabled.
+                        $guestenrol = $DB->get_record('enrol', array('enrol' => 'guest', 'courseid' => $commoncourse->id));
+
+                        if ($guestenrol->status) { // status = 1 means 'disabled method'.
+
+                            continue;
+                        }
+
+                        if (!in_array($commoncourse->id, $courseids)) {
+
+                            $courses[] = $commoncourse;
+                        }
                     }
                 }
             }
