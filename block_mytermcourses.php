@@ -182,8 +182,9 @@ class block_mytermcourses extends block_base {
                 }
             }
         }
+        
         return $courses;
-	}
+    }
 
     public function sortcategories($categoriesid) {
 
