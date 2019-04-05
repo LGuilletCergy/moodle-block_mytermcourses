@@ -127,6 +127,18 @@ class block_mytermcourses extends block_base {
 
                     $style = "font-weight:bold;padding:5px;padding-left:10px;color:white;background-color:$bgcolor;"
                             . "width:100%";
+                } else {
+
+                    if ($yearcategory) {
+
+                        $bgcolor = '#731472';
+                    } else {
+
+                        $bgcolor = '#A56E9D';
+                    }
+
+                    $style="font-weight:bold;padding:5px;padding-left:10px;color:white;"
+                            . "background-color:$bgcolor;width:100%";
                 }
 
                 $category = $DB->get_record('course_categories', array('id' => $category->id));
@@ -182,7 +194,7 @@ class block_mytermcourses extends block_base {
                 }
             }
         }
-        
+
         return $courses;
     }
 
