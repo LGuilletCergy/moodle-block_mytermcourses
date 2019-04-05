@@ -49,8 +49,10 @@ $string['commoncategories'] = 'Common categories';
 $string['notenrolled'] = 'You\'re not enrolled in any course';
 $string['firstterm'] = 'First term';
 $string['secondterm'] = 'Second term';
+$string['configidnumber'] = 'the sorting of courses by idnumber';
 $string['configidnumber_help'] = 'When displaying the courses, instead of sorting them by sortorder,'
         . ' sort them by idnumber.';
+$string['configcommon'] = 'the common categories';
 $string['configcommon_help'] = 'Courses within theses categories will be displayed to all users,'
         . ' even if they are not enrolled in. You may want to make sure these courses are open to all users.'
         . ' Write categories ids, separated by ; symbols.';
