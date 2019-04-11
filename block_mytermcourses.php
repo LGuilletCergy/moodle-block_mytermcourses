@@ -109,11 +109,11 @@ class block_mytermcourses extends block_base {
 
                     $yearcategory = true;
                     $nextyear = $CFG->thisyear + 1;
-                    $categoryprefix = "$CFG->thisyear-$nextyear : ";
+                    $categoryprefix = "$CFG->thisyear-$nextyear / ";
                 } else if ($categorycodeparts[0] == $CFG->previousyearprefix) {
 
                     $yearcategory = true;
-                    $categoryprefix = "$CFG->previousyear-$CFG->thisyear : ";
+                    $categoryprefix = "$CFG->previousyear-$CFG->thisyear / ";
                 } else {
 
                     $yearcategory = false;
@@ -128,7 +128,13 @@ class block_mytermcourses extends block_base {
 
                     if ($yearcategory && !in_array($category->id, $commoncategoriesid)) {
 
-                        $bgcolor = '#731472';
+                        if ($categorycodeparts[0] == $CFG->yearprefix) {
+
+                            $bgcolor = '#731472';
+                        } else {
+
+                            $bgcolor = '#28A745';
+                        }
                     } else {
 
                         $bgcolor = '#A56E9D';
@@ -140,7 +146,13 @@ class block_mytermcourses extends block_base {
 
                     if ($yearcategory) {
 
-                        $bgcolor = '#731472';
+                        if ($categorycodeparts[0] == $CFG->yearprefix) {
+
+                            $bgcolor = '#731472';
+                        } else {
+
+                            $bgcolor = '#28A745';
+                        }
                     } else {
 
                         $bgcolor = '#A56E9D';
