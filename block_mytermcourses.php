@@ -108,9 +108,16 @@ class block_mytermcourses extends block_base {
                 if ($categorycodeparts[0] == $CFG->yearprefix) {
 
                     $yearcategory = true;
+                    $nextyear = $CFG->thisyear + 1;
+                    $categoryprefix = "$CFG->thisyear-$nextyear : ";
+                } else if ($categorycodeparts[0] == $CFG->previousyearprefix) {
+
+                    $yearcategory = true;
+                    $categoryprefix = "$CFG->previousyear-$CFG->thisyear : ";
                 } else {
 
                     $yearcategory = false;
+                    $categoryprefix = "";
                 }
 
                 $commoncategoriessettings = get_config('mytermcourses', 'Common_categories');
@@ -144,7 +151,7 @@ class block_mytermcourses extends block_base {
                 }
 
                 $category = $DB->get_record('course_categories', array('id' => $category->id));
-                $this->content->text .= "<p style='$style'>$category->name</p>";
+                $this->content->text .= "<p style='$style'>$categoryprefix.$category->name</p>";
                 $this->displaycourses($courses, $category);
             }
         }
