@@ -164,7 +164,7 @@ function block_mytermcourses_createsections($newcourse, $newcontext) {
     }
 }
 
-function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid, $connection) {
+function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid) {
 
     global $CFG, $DB;
 
@@ -173,7 +173,11 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
     $categorystyle = "font-weight:bold;padding:5px;color:white;background-color:gray;width:100%";
     foreach ($oldcourses as $oldcourse) {
 
-        $category = $DB->get_record('course_categories', array('id' => $oldcourse->categoryid));
+//        print_object($oldcourses);
+//        print_object($oldcourse);
+//        echo "END<br>";
+
+        $category = $DB->get_record('course_categories', array('id' => $oldcourse->category));
         if ($category->parent != 0) {
 
             $parentcategory = $DB->get_record('course_categories', array('id' => $category->parent));
@@ -200,7 +204,7 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
         }
 
         $html .= '<p>';
-        $html .= "<a href=$CFG->wwwroot'/course/view.php?id=$oldcourseid' target='_blank'>";
+        $html .= "<a href=$CFG->wwwroot/course/view.php?id=$oldcourseid target='_blank'>";
         $html .= $oldcoursename;
         $html .= "</a>&nbsp;&nbsp;";
 
@@ -228,7 +232,7 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
 
                 if ($oldcourseid == $fetchedcourseid) {
 
-                    block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcourseidnumber, $newcategoryname,
+                    block_mytermcourses_fetchcourse($fetchedcourseid, $newcourseidnumber, $newcategoryname,
                             $newcategoryidnumber, $newparentcategoryidnumber);
                 }
             }
@@ -237,10 +241,8 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
 
             if ($similarnewcourses) {
 
-                if ($connection) {
 
-                    $againconfirm = block_mytermcourses_againconfirm($oldcourseid, $connection);
-                }
+                $againconfirm = block_mytermcourses_againconfirm($oldcourseid);
 
                 $html .= "<button class='btn btn-secondary' onclick='block_mytermcourses_newcourses"
                         . "(\"$newcourseidnumber\")'>".get_string('similarnewcourses', 'block_mytermcourses')
@@ -264,7 +266,7 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
     return $html;
 }
 
-function block_mytermcourses_againconfirm($oldcourseid, $connection) {
+function block_mytermcourses_againconfirm($oldcourseid) {
 
     $html = '<div>';
     $html .= get_string('reallyfetchagain', 'block_mytermcourses').'&nbsp';
@@ -400,14 +402,14 @@ function block_mytermcourses_idnumbercounter($nature, $parentid) {
     return $idnumber;
 }
 
-function block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcourseidnumber,
+function block_mytermcourses_fetchcourse($fetchedcourseid, $newcourseidnumber,
         $newcategoryname, $newcategoryidnumber, $newparentcategoryidnumber) {
 
     global $CFG, $DB;
 
-    $backupcommand = "cd /var/www/moodle && moosh -n course-backup -f "
+    $backupcommand = "cd $CFG->dirroot && moosh course-backup -f "
             . "/var/backedcourses/course$fetchedcourseid.mbz $fetchedcourseid";
-    ssh2_exec($connection, $backupcommand);
+    system($backupcommand);
 
     $newcategory = $DB->get_record('course_categories', array('idnumber' => $newcategoryidnumber));
 
@@ -432,7 +434,7 @@ function block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcour
         $DB->update_record('course', $oldcourse);
     }
 
-    $restorecommand = "cd $CFG->dirroot && moosh -n course-restore "
+    $restorecommand = "cd $CFG->dirroot && moosh course-restore "
             . "/var/backedcourses/course$fetchedcourseid.mbz $newcategory->id";
     $restoreoutput = system($restorecommand);
     $restoretable = explode("New course ID for ", $restoreoutput);
@@ -458,9 +460,7 @@ function block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcour
 function block_mytermcourses_error($errorstring) {
 
     global $OUTPUT;
-    echo $OUTPUT->header();
     echo $errorstring;
-    echo $OUTPUT->footer();
     exit;
 }
 
