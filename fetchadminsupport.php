@@ -57,8 +57,10 @@ $PAGE->set_heading($title);
 $PAGE->navbar->add(get_string('pluginname', 'block_mytermcourses'));
 $PAGE->navbar->add($title);
 
-$connection = ssh2_connect('enp16.u-cergy.fr', 22);
-ssh2_auth_password($connection, 'enp17', 'Hrso3[(à');
+$connection = ssh2_connect('cours.u-cergy.fr', 22);
+ssh2_auth_password($connection, 'fetchuser', 'K9nb)Vx6tGf(');
+
+// TODO : Vérifier l'utilité.
 $courselistcommand = "php /var/www/moodle/enp17adminsupport.php $topidnumber";
 $courseliststream = ssh2_exec($connection, $courselistcommand);
 stream_set_blocking($courseliststream, true);

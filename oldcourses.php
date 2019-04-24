@@ -35,7 +35,6 @@
 require_once('../../config.php');
 require_once("$CFG->dirroot/blocks/mytermcourses/lib.php");
 $lastyear = ($CFG->thisyear - 1).'-'.$CFG->thisyear;
-$oldyear = optional_param('year', $lastyear, PARAM_TEXT);
 $fetchedcourseid = optional_param('fetch', 0, PARAM_INT);
 
 require_login();
@@ -51,62 +50,66 @@ if (!has_capability('block/mytermcourses:createcourse', $sitecontext)) {
 
 $PAGE->set_context($sitecontext);
 $PAGE->set_url($moodlefilename);
-$title = get_string('pluginname', 'block_mytermcourses')." $oldyear";
+$title = get_string('pluginname', 'block_mytermcourses')." $lastyear";
 $PAGE->set_title($title);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading($title);
 $PAGE->navbar->add(get_string('pluginname', 'block_mytermcourses'));
 $PAGE->navbar->add($title);
 
-$connection = ssh2_connect('enp16.u-cergy.fr', 22);
-ssh2_auth_password($connection, 'enp17', 'Hrso3[(à');
-
-$courselistcommand = "php /var/www/moodle/enp17.php $USER->username";
-$courseliststream = ssh2_exec($connection, $courselistcommand);
-stream_set_blocking($courseliststream, true);
-$courseliststreamout = ssh2_fetch_stream($courseliststream, SSH2_STREAM_STDIO);
-$courselist = stream_get_contents($courseliststreamout);
-$oldcourses = explode('£§£', $courselist);
-
 echo $OUTPUT->header();
 
-if (isset($oldcourses[0])) {
+$roleteacher = $DB->get_record('role', array('shortname' => 'editingteacher'))->id;
+$roleappuiadmin = $DB->get_record('role', array('shortname' => 'appuiadmin'))->id;
+$rolestudent = $DB->get_record('role', array('shortname' => 'student'))->id;
 
-    $oldteachedcourses = explode('£µ£', $oldcourses[0]);
-    $teacheroutput = trim(block_mytermcourses_oldcourses($oldteachedcourses,
-        'editingteacher', $fetchedcourseid, $connection));
+$listoldteachedcourses = list_old_courses_for_role($roleteacher);
+$listoldappuiadmincourses = list_old_courses_for_role($roleappuiadmin);
+$listoldstudiedcourses = list_old_courses_for_role($rolestudent);
 
-    if ($teacheroutput) {
+// Les cours où l'utilisateur est enseignant.
 
-        echo '<h3>'.get_string('teacheroldcourses', 'block_mytermcourses').'</h3>';
-        echo "$teacheroutput<br>";
-    }
+$teacheroutput = trim(block_mytermcourses_oldcourses($listoldteachedcourses,
+    'editingteacher', $fetchedcourseid, $connection));
+
+if ($teacheroutput) {
+
+    echo '<h3>'.get_string('teacheroldcourses', 'block_mytermcourses').'</h3>';
+    echo "$teacheroutput<br>";
 }
 
-if (isset($oldcourses[2])) {
+// Les cours où l'utilisateur est appui administratif.
+$adminoutput = trim(block_mytermcourses_oldcourses($oldadmincourses, 'appuiadmin', $fetchedcourseid, $connection));
 
-    $oldadmincourses = explode('£µ£', $oldcourses[2]);
-    $adminoutput = trim(block_mytermcourses_oldcourses($oldadmincourses, 'appuiadmin', $fetchedcourseid, $connection));
+if ($adminoutput) {
 
-    if ($adminoutput) {
-
-        echo '<h3>'.get_string('adminoldcourses', 'block_mytermcourses').'</h3>';
-        echo "$adminoutput<br>";
-    }
+    echo '<h3>'.get_string('adminoldcourses', 'block_mytermcourses').'</h3>';
+    echo "$adminoutput<br>";
 }
 
-if (isset($oldcourses[1])) {
+// Les cours où l'utilisateur est étudiant.
 
-    $oldstudiedcourses = explode('£µ£', $oldcourses[1]);
-    $studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
+$oldstudiedcourses = explode('£µ£', $oldcourses[1]);
+$studentoutput = trim(block_mytermcourses_oldcourses($oldstudiedcourses, 'student', 0, 0, null));
 
-    if ($studentoutput) {
+if ($studentoutput) {
 
-        echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
-        echo "$studentoutput<br>";
-    }
+    echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
+    echo "$studentoutput<br>";
 }
 
 echo "<a href='$CFG->wwwroot/my'><button class='btn btn-primary'>".get_string('back')."</button></a>";
 echo $OUTPUT->footer();
 
+function list_old_courses_for_role($roleid) {
+
+    global $USER, $CFG, $DB;
+
+    $sql = "SELECT * FROM {course} WHERE idnumber LIKE $CFG->previousyearprefix AND id IN "
+            . "(SELECT instanceid FROM {context} WHERE contextlevel = ".CONTEXT_COURSE." AND id IN"
+            . "(SELECT contextid FROM {role_assignments} WHERE userid = $USER->id AND roleid = $roleid))";
+
+    $listoldcourses = $DB->get_record_sql($sql);
+
+    return $listoldcourses;
+}

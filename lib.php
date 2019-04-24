@@ -173,19 +173,20 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
     $categorystyle = "font-weight:bold;padding:5px;color:white;background-color:gray;width:100%";
     foreach ($oldcourses as $oldcourse) {
 
-        $oldcoursetable = explode(';', $oldcourse);
-        $oldcategoryidnumber = $oldcoursetable[0];
-        if (!$oldcategoryidnumber) {
+        $category = $DB->get_record('course_categories', array('id' => $oldcourse->categoryid));
+        if ($category->parent != 0) {
 
-            continue;
+            $parentcategory = $DB->get_record('course_categories', array('id' => $category->parent));
         }
-        $oldcategoryname = $oldcoursetable[1];
-        $oldcourseidnumber = $oldcoursetable[2];
-        $oldcoursename = $oldcoursetable[3];
-        $oldcourseid = $oldcoursetable[4];
-        if (isset($oldcoursetable[5])) {
 
-            $oldparentcategoryidnumber = $oldcoursetable[5];
+        $oldcategoryidnumber = $category->idnumber;
+        $oldcategoryname = $category->name;
+        $oldcourseidnumber = $oldcourse->idnumber;
+        $oldcoursename = $oldcourse->fullname;
+        $oldcourseid = $oldcourse->id;
+        if ($category->parent != 0) {
+
+            $oldparentcategoryidnumber = $parentcategory->idnumber;
         } else {
 
             $oldparentcategoryidnumber = '';
@@ -199,7 +200,7 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
         }
 
         $html .= '<p>';
-        $html .= "<a href='https://enp16.u-cergy.fr/course/view.php?id=$oldcourseid' target='_blank'>";
+        $html .= "<a href=$CFG->wwwroot'/course/view.php?id=$oldcourseid' target='_blank'>";
         $html .= $oldcoursename;
         $html .= "</a>&nbsp;&nbsp;";
 
@@ -210,12 +211,6 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
             if (!has_capability('block/mytermcourses:createcourse', $sitecontext)) {
 
                 $cantransfer = false;
-            }
-
-            if ($rolename == 'editingteacher') {
-
-                //TODO : si le cours est dans l'offre pédagogique cette année et que cet utilisateur ne l'enseigne plus,
-                // ne pas permettre le transfert.
             }
 
             $newcourseidnumber = block_mytermcourses_newidnumber($oldcourseidnumber);
@@ -247,9 +242,12 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
                     $againconfirm = block_mytermcourses_againconfirm($oldcourseid, $connection);
                 }
 
-                $html .= "<button class='btn btn-secondary' onclick='block_mytermcourses_newcourses(\"$newcourseidnumber\")'>".get_string('similarnewcourses', 'block_mytermcourses')."</button>";
+                $html .= "<button class='btn btn-secondary' onclick='block_mytermcourses_newcourses"
+                        . "(\"$newcourseidnumber\")'>".get_string('similarnewcourses', 'block_mytermcourses')
+                        ."</button>";
                 $html .= '&nbsp;';
-                $html .= "<button class='btn btn-secondary' onclick='block_mytermcourses_again(\"$newcourseidnumber\")'>".get_string('fetchagain', 'block_mytermcourses')."</button>";
+                $html .= "<button class='btn btn-secondary' onclick='block_mytermcourses_again"
+                        . "(\"$newcourseidnumber\")'>".get_string('fetchagain', 'block_mytermcourses')."</button>";
                 $html .= "<div style='display:none' id='again$newcourseidnumber'>$againconfirm</div>";
                 $html .= "<div style='display:none' id='sim$newcourseidnumber'>$similarnewcourses</div>";
             } else if ($cantransfer) {
@@ -264,12 +262,6 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
     }
 
     return $html;
-}
-
-function block_mytermcourses_formatsform() {
-
-    global $CFG;
-    $picturesdir = "$CFG->dirroot/blocks/mytermcourses/pictures";
 }
 
 function block_mytermcourses_againconfirm($oldcourseid, $connection) {
@@ -317,7 +309,7 @@ function block_mytermcourses_newname($oldname) {
 
     global $CFG;
 
-    $oldyear = 'Y2017-';
+    $oldyear = $CFG->previousyearprefix.'-';
     $newyear = $CFG->yearprefix.'-';
     $length = strlen($oldyear);
     $oldyearposition = strpos($oldname, $oldyear);
@@ -342,17 +334,9 @@ function block_mytermcourses_newidnumber($oldidnumber) {
         $idnumbertable = explode('+', $oldidnumber);
         $oldidnumber = $idnumbertable[0];
     }
-    if (substr($oldidnumber, 0, 6) == 'Y2017-') {
+    if (substr($oldidnumber, 0, 6) == $CFG->previousyearprefix.'-') {
 
         $newidnumber = substr_replace($oldidnumber, $CFG->yearprefix, 0, 5);
-
-        if ((substr($newidnumber, -1, 1) == 'A') && (substr($newidnumber, -3, 1) == '-')) {
-
-            $newidnumber .= 'U';
-        }
-    } else if (substr($oldidnumber, 0, 6) == 'COLLAB') {
-
-        $newidnumber = $oldidnumber;
     } else {
 
         $newidnumber = '';
@@ -421,20 +405,9 @@ function block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcour
 
     global $CFG, $DB;
 
-    $unmarkcommand = "php /var/www/moodle/enp17unmark.php $fetchedcourseid";
-    ssh2_exec($connection, $unmarkcommand);
     $backupcommand = "cd /var/www/moodle && moosh -n course-backup -f "
-            . "/var/movingcourses/course$fetchedcourseid.mbz $fetchedcourseid";
+            . "/var/backedcourses/course$fetchedcourseid.mbz $fetchedcourseid";
     ssh2_exec($connection, $backupcommand);
-    $fetchcommand = "scp enp17@enp16.u-cergy.fr:/var/movingcourses/course$fetchedcourseid.mbz /var/enp16courses";
-    $retry = 1;
-    $tries = 0;
-
-    while ($retry && $tries < 50) {    // Retry fetching if it didn't work, but not more than 50 times.
-
-        system($fetchcommand, $retry);
-        $tries++;
-    }
 
     $newcategory = $DB->get_record('course_categories', array('idnumber' => $newcategoryidnumber));
 
@@ -449,8 +422,18 @@ function block_mytermcourses_fetchcourse($connection, $fetchedcourseid, $newcour
         exit;
     }
 
+    $oldcourse = $DB->get_record('course', array('id' => $fetchedcourseid));
+    $oldshortname = $oldcourse->shortname;
+
+    if (substr($oldshortname, 0, 5) != $CFG->previousyearprefix) {
+
+        $oldcourse->shortname = $CFG->previousyearprefix."-".$oldcourse->shortname;
+
+        $DB->update_record('course', $oldcourse);
+    }
+
     $restorecommand = "cd $CFG->dirroot && moosh -n course-restore "
-            . "/var/enp16courses/course$fetchedcourseid.mbz $newcategory->id";
+            . "/var/backedcourses/course$fetchedcourseid.mbz $newcategory->id";
     $restoreoutput = system($restorecommand);
     $restoretable = explode("New course ID for ", $restoreoutput);
     $errorstring = "<h3>Une erreur s'est produite. Les indications ci-dessus (s'il y en a) peuvent aider "
@@ -541,7 +524,7 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     }
 
     $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
-    $restoredcourse->shortname = $restoredcourse->fullname;
+    $restoredcourse->shortname = block_mytermcourses_tryshortname($restoredcourse->fullname, 0);
     $restoredcourse->idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
     $restoredcourse->groupmode = 1;
     $restoredcourse->enablecompletion = 1;
@@ -563,9 +546,8 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
         $DB->insert_record('course_format_options', $option);
     }
 
-    //TODO : rediriger plutôt vers la page d'affectation des cohortes.
-    $courseurl = new moodle_url('/course/view.php', array('id' => $restoredcourseid));
-    redirect($courseurl);
+    $cohorturl = new moodle_url('/blocks/mytermcourses/cohorts.php', array('id' => $restoredcourseid));
+    redirect($cohorturl);
 }
 
 function block_mytermcourses_enrolcreator($courseid) {
@@ -657,46 +639,6 @@ function block_mytermcourses_courseimage($courserecord, $imagewidth, $imageheigh
     return $content;
 }
 
-function block_mytermcourses_coursecontacts2($courserecord) {
-
-    $course = new course_in_list($courserecord);
-    $content = '';
-
-    if ($course->has_course_contacts()) {
-
-        $coursecontacts = $course->get_course_contacts();
-        $nbcontacts = count($coursecontacts);
-
-        if ($nbcontacts > 1) {
-
-            $s = 's';
-        } else {
-
-            $s = '';
-        }
-        $currentrole = '';
-
-        foreach ($coursecontacts as $userid => $coursecontact) {
-
-            if ($coursecontact['rolename'] != $currentrole) {
-
-                $currentrole = $coursecontact['rolename'];
-                $content .= '<br>'.$coursecontact['rolename'].$s.' : ';
-            } else {
-
-                $content .= ', ';
-            }
-
-            $name = html_writer::link(new moodle_url('/user/view.php',
-                    array('id' => $userid, 'course' => SITEID)), $coursecontact['username']);
-            $content .= $name;
-        }
-    }
-
-    return $content;
-
-}
-
 function block_mytermcourses_coursecontacts($courserecord) {
 
     $course = new course_in_list($courserecord);
@@ -748,28 +690,6 @@ function block_mytermcourses_coursecontacts($courserecord) {
     }
 
     $content .= '</div>';
-    return $content;
-}
-
-function block_mytermcourses_coursesummary($courserecord) {
-
-    //TODO : gérer chelper
-    $course = new course_in_list($courserecord);
-    $content = '';
-    // display course summary
-
-    if ($course->has_summary()) {
-
-        //~ $content .= html_writer::start_tag('div', array('class' => 'summary', 'style' => 'font-size:11'));
-        $chelper = new coursecat_helper();
-        //~ $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED);
-        $chelper->set_show_courses(1);
-        $content .= $chelper->get_course_formatted_summary($course,
-                array('overflowdiv' => true, 'noclean' => true, 'para' => false));
-        //~ $content .= html_writer::end_tag('div'); // .summary
-    }
-
-    var_dump($content);
     return $content;
 }
 
@@ -834,14 +754,6 @@ function block_mytermcourses_availablecourses($xmlvet, $vetcodeyear) {
     }
 
     return $vetcourses;
-}
-
-function block_mytermcourses_availablegroups($xmlcourse, $vetcodeyear) {
-
-    $coursegroups = array();
-    $xmlgroups = $xmlcourse->childNodes;
-    //TODO
-    return $coursegroups;
 }
 
 function block_mytermcourses_showavailablecourses($availablevet) {
@@ -1156,24 +1068,6 @@ function block_mytermcourses_again(idnumber) {
 
         confirmdiv.style.display = 'none';
     }
-}
-
-function block_mytermcourses_availables() {
-
-    step1div = document.getElementById('step1');
-    step2div = document.getElementById('step2');
-    availablesdiv = document.getElementById('availables');
-
-    if (step1div) {
-
-        step1div.style.display = 'none';
-    }
-    if (step2div) {
-
-        step2div.style.display = 'none';
-    }
-
-    availablesdiv.style.display = 'block';
 }
 
 function block_mytermcourses_notfound() {
