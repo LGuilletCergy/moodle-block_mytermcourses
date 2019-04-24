@@ -105,7 +105,7 @@ function list_old_courses_for_role($roleid) {
 
     global $USER, $CFG, $DB;
 
-    $sql = "SELECT * FROM {course} WHERE idnumber LIKE $CFG->previousyearprefix AND id IN "
+    $sql = "SELECT * FROM {course} WHERE idnumber LIKE '$CFG->previousyearprefix' AND id IN "
             . "(SELECT instanceid FROM {context} WHERE contextlevel = ".CONTEXT_COURSE." AND id IN"
             . "(SELECT contextid FROM {role_assignments} WHERE userid = $USER->id AND roleid = $roleid))";
 
