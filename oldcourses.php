@@ -67,6 +67,9 @@ $listoldteachedcourses = list_old_courses_for_role($roleteacher);
 $listoldappuiadmincourses = list_old_courses_for_role($roleappuiadmin);
 $listoldstudiedcourses = list_old_courses_for_role($rolestudent);
 
+$connection = ssh2_connect('cours.u-cergy.fr', 22);
+ssh2_auth_password($connection, 'fetchuser', 'K9nb)Vx6tGf(');
+
 // Les cours où l'utilisateur est enseignant.
 
 $teacheroutput = trim(block_mytermcourses_oldcourses($listoldteachedcourses,
