@@ -531,6 +531,7 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     echo "<br>Shortname : $shortname<br>";
     $idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
     echo "Id Number : $idnumber<br>";
+    exit;
     $restoredcourse->shortname = $shortname;
     $restoredcourse->idnumber = $idnumber;
     $restoredcourse->groupmode = 1;
