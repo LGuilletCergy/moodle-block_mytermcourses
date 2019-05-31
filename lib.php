@@ -516,7 +516,6 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     $titleandids = explode(':', $restoretable[1]);
     $idtable = explode(' ', $titleandids[1]);
     $first = substr($idtable[1], 0, 1);
-    exit;
 
     if ($first == '_') {
 
