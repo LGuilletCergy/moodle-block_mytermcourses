@@ -526,6 +526,8 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
         $restoredcourseid = $idtable[1];
     }
 
+    echo "<br>Test<br>";
+
     $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
     $shortname = block_mytermcourses_tryshortname($restoredcourse->fullname, 0);
     echo "<br>Shortname : $shortname<br>";
