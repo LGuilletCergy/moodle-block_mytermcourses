@@ -437,7 +437,10 @@ function block_mytermcourses_fetchcourse($fetchedcourseid, $newcourseidnumber,
     $restorecommand = "cd $CFG->dirroot && moosh course-restore "
             . "/var/backedcourses/course$fetchedcourseid.mbz $newcategory->id";
     $restoreoutput = system($restorecommand);
+    print_object($restoreoutput);
     $restoretable = explode("New course ID for ", $restoreoutput);
+    print_object($restoretable);
+    exit;
     $errorstring = "<h3>Une erreur s'est produite. Les indications ci-dessus (s'il y en a) peuvent aider "
             . "le Service d'ingénierie pédagogique à résoudre ce problème. S'il n'y en a pas, essayez de recharger "
             . "cette page : il arrive que ça fonctionne la deuxième fois.</h3>";
