@@ -526,13 +526,11 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
         $restoredcourseid = $idtable[1];
     }
 
-    echo "<br>Test<br>";
-
     $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
     $shortname = block_mytermcourses_tryshortname($restoredcourse->fullname, 0);
-    echo "<br>Shortname : $shortname<br>";
+    print_object($shortname);
     $idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
-    echo "Id Number : $idnumber<br>";
+    print_object($idnumber);
     exit;
     $restoredcourse->shortname = $shortname;
     $restoredcourse->idnumber = $idnumber;
