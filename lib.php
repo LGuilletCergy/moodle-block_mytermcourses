@@ -514,14 +514,8 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     // Le problème est dans cette fonction.
 
     $titleandids = explode(':', $restoretable[1]);
-    echo "Title and Ids<br>";
-    print_object($titleandids);
     $idtable = explode(' ', $titleandids[1]);
-    echo "Id Table<br>";
-    print_object($idtable);
     $first = substr($idtable[1], 0, 1);
-    echo "First<br>";
-    print_object($first);
     exit;
 
     if ($first == '_') {
@@ -533,8 +527,12 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     }
 
     $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
-    $restoredcourse->shortname = block_mytermcourses_tryshortname($restoredcourse->fullname, 0);
-    $restoredcourse->idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
+    $shortname = block_mytermcourses_tryshortname($restoredcourse->fullname, 0);
+    echo "<br>Shortname : $shortname<br>";
+    $idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
+    echo "Id Number : $idnumber<br>";
+    $restoredcourse->shortname = $shortname;
+    $restoredcourse->idnumber = $idnumber;
     $restoredcourse->groupmode = 1;
     $restoredcourse->enablecompletion = 1;
     $DB->update_record('course', $restoredcourse);
