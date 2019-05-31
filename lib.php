@@ -437,10 +437,7 @@ function block_mytermcourses_fetchcourse($fetchedcourseid, $newcourseidnumber,
     $restorecommand = "cd $CFG->dirroot && moosh course-restore "
             . "/var/backedcourses/course$fetchedcourseid.mbz $newcategory->id";
     $restoreoutput = system($restorecommand);
-    print_object($restoreoutput);
     $restoretable = explode("New course ID for ", $restoreoutput);
-    print_object($restoretable);
-    exit;
     $errorstring = "<h3>Une erreur s'est produite. Les indications ci-dessus (s'il y en a) peuvent aider "
             . "le Service d'ingénierie pédagogique à résoudre ce problème. S'il n'y en a pas, essayez de recharger "
             . "cette page : il arrive que ça fonctionne la deuxième fois.</h3>";
@@ -514,9 +511,18 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
 
     global $DB;
 
+    // Le problème est dans cette fonction.
+
     $titleandids = explode(':', $restoretable[1]);
+    echo "Title and Ids<br>";
+    print_object($titleandids);
     $idtable = explode(' ', $titleandids[1]);
+    echo "Id Table<br>";
+    print_object($idtable);
     $first = substr($idtable[1], 0, 1);
+    echo "First<br>";
+    print_object($first);
+    exit;
 
     if ($first == '_') {
 
