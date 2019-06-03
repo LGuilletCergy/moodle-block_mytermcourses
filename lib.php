@@ -173,10 +173,6 @@ function block_mytermcourses_oldcourses($oldcourses, $rolename, $fetchedcourseid
     $categorystyle = "font-weight:bold;padding:5px;color:white;background-color:gray;width:100%";
     foreach ($oldcourses as $oldcourse) {
 
-//        print_object($oldcourses);
-//        print_object($oldcourse);
-//        echo "END<br>";
-
         $category = $DB->get_record('course_categories', array('id' => $oldcourse->category));
         if ($category->parent != 0) {
 
@@ -446,7 +442,7 @@ function block_mytermcourses_fetchcourse($fetchedcourseid, $newcourseidnumber,
 
         if (isset($restoretable[1])) {
 
-            block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnumber);
+            block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnumber, $fetchedcourseid);
         } else {
 
             block_mytermcourses_error($errorstring);
@@ -507,11 +503,14 @@ function block_mytermcourses_tryshortname ($coursename, $i) {
     }
 }
 
-function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnumber) {
+function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnumber, $oldcourseid) {
 
     global $DB;
 
     // Le problème est dans cette fonction.
+    // Le souci vient du fait que le fullname du cours contient automatiquement le terme copie.
+    // Solution : Récupérer le fullname du cours original et le rétablir.
+    // Nécessite de changer les paramètres de la fonction.
 
     $titleandids = explode(':', $restoretable[1]);
     $idtable = explode(' ', $titleandids[1]);
@@ -525,13 +524,12 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
         $restoredcourseid = $idtable[1];
     }
 
+    $oldcourse = $DB->get_record('course', array('id' => $oldcourseid));
+
     $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
-    echo "<br> Fullname : ".$restoredcourse->fullname."<br>";
+    echo "<br> Fullname : ".$oldcourse->fullname."<br>";
     $shortname = block_mytermcourses_tryshortname($restoredcourse->fullname, 0);
-    print_object($shortname);
     $idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
-    print_object($idnumber);
-    exit;
     $restoredcourse->shortname = $shortname;
     $restoredcourse->idnumber = $idnumber;
     $restoredcourse->groupmode = 1;
