@@ -496,7 +496,7 @@ function block_mytermcourses_tryshortname ($coursename, $i) {
 
     if ($already) {
 
-        return block_mytermcourses_tryshortname($newshortname, $i + 1);
+        return block_mytermcourses_tryshortname($coursename, $i + 1);
     } else {
 
         return $newshortname;
