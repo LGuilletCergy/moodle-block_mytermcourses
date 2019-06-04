@@ -507,11 +507,6 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
 
     global $DB;
 
-    // Le problème est dans cette fonction.
-    // Le souci vient du fait que le fullname du cours contient automatiquement le terme copie.
-    // Solution : Récupérer le fullname du cours original et le rétablir.
-    // Nécessite de changer les paramètres de la fonction.
-
     $titleandids = explode(':', $restoretable[1]);
     $idtable = explode(' ', $titleandids[1]);
     $first = substr($idtable[1], 0, 1);
@@ -536,7 +531,7 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     $restoredcourse->enablecompletion = 1;
     $DB->update_record('course', $restoredcourse);
     //~ $DB->set_field('course', 'idnumber', $newcourseidnumber, array('id' => $restoredcourseid));
-    block_mytermcourses_enrolcreator($restoredcourseid);
+    block_mytermcourses_enrolcreator($restoredcourseid, $oldcourseid);
     // Set coursedisplay topics format option to 0 if it's not already set.
     $coursedisplayset = $DB->record_exists('course_format_options',
             array('courseid' => $restoredcourseid, 'format' => 'topics', 'name' => 'coursedisplay'));
@@ -556,9 +551,19 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
     redirect($cohorturl);
 }
 
-function block_mytermcourses_enrolcreator($courseid) {
+function block_mytermcourses_enrolcreator($courseid, $oldcourseid) {
 
     global $DB, $USER;
+
+    // Ici, inscrire comme enseignant ou appui administratif suivant l'ancien rôle.
+
+    $oldcontextid = $DB->get_record('context',
+            array('instanceid' => $oldcourseid, 'contextlevel' => CONTEXT_COURSE))->id;
+    $listrolesoldcourse = $DB->get_records('role_assignments',
+            array('contextid' => $oldcontextid, 'userid' => $USER->id));
+
+    $teacherroleid = $DB->get_record('role', array('shortname' => 'editingteacher'))->id;
+    $appuiadminroleid = $DB->get_record('role', array('shortname' => 'appuiadmin'))->id;
 
     $now = time();
     $manualenrol = $DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'manual'));
@@ -571,9 +576,19 @@ function block_mytermcourses_enrolcreator($courseid) {
     $creatorenrolment->timecreated = $now;
     $creatorenrolment->timemodified = $now;
     $DB->insert_record('user_enrolments', $creatorenrolment);
-    $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+
     $coursecontext = context_course::instance($courseid);
-    role_assign($role->id, $USER->id, $coursecontext->id);
+
+    foreach ($listrolesoldcourse as $roleoldcourse) {
+
+        if ($roleoldcourse->roleid == $teacherroleid) {
+
+            role_assign($teacherroleid, $USER->id, $coursecontext->id);
+        } else if ($roleoldcourse->roleid == $appuiadminroleid) {
+
+            role_assign($appuiadminroleid, $USER->id, $coursecontext->id);
+        }
+    }
 }
 
 function block_mytermcourses_displaycourse($course) {
