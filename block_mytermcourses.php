@@ -101,6 +101,9 @@ class block_mytermcourses extends block_base {
 
             $categories = $this->sortcategories($categoriesid);
 
+            print_object($categories);
+            exit;
+
             // Display categories and courses.
             foreach ($categories as $category) {
 
