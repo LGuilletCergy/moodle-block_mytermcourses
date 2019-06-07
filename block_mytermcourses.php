@@ -101,9 +101,6 @@ class block_mytermcourses extends block_base {
 
             $categories = $this->sortcategories($categoriesid);
 
-            print_object($categories);
-            exit;
-
             // Display categories and courses.
             foreach ($categories as $category) {
 
@@ -328,27 +325,27 @@ class block_mytermcourses extends block_base {
          * (on ne veut pas d'étudiants dans les espaces collaboratifs).
          */
 
-        foreach ($currentyearcategories as $category => $idnumber) {
+        foreach ($currentyearcategories as $category) {
 
             array_push($categories, $category);
         }
 
-        foreach ($blockcommoncategories as $category => $idnumber) {
+        foreach ($blockcommoncategories as $category) {
 
             array_push($categories, $category);
         }
 
-        foreach ($previousyearcategories as $category => $idnumber) {
+        foreach ($previousyearcategories as $category) {
 
             array_push($categories, $category);
         }
 
-        foreach ($blockpreviousyearcommoncategories as $category => $idnumber) {
+        foreach ($blockpreviousyearcommoncategories as $category) {
 
             array_push($categories, $category);
         }
 
-        foreach ($personalspacecategories as $category => $idnumber) {
+        foreach ($personalspacecategories as $category) {
 
             array_push($categories, $category);
 
@@ -357,13 +354,13 @@ class block_mytermcourses extends block_base {
 
         if (!$haspersonalspace) {
 
-            foreach ($collaborativespacecategories as $category => $idnumber) {
+            foreach ($collaborativespacecategories as $category) {
 
                 array_push($categories, $category);
             }
         }
 
-        foreach ($othercategories as $category => $idnumber) {
+        foreach ($othercategories as $category) {
 
             array_push($categories, $category);
         }
