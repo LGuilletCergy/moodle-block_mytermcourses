@@ -555,8 +555,6 @@ function block_mytermcourses_enrolcreator($courseid, $oldcourseid) {
 
     global $DB, $USER;
 
-    // Ici, inscrire comme enseignant ou appui administratif suivant l'ancien rôle.
-
     $oldcontextid = $DB->get_record('context',
             array('instanceid' => $oldcourseid, 'contextlevel' => CONTEXT_COURSE))->id;
     $listrolesoldcourse = $DB->get_records('role_assignments',

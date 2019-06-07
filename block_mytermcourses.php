@@ -228,9 +228,16 @@ class block_mytermcourses extends block_base {
 
     public function sortcategories($categoriesid) {
 
-        global $DB;
+        // Changer ici pour définir l'ordre des catégories shouhaitées
+
+        /* Année actuelle en premier, puis catégorie commune du bloc, puis année précédente,
+         *  puis espaces personnels, puis espaces collaboratifs, puis le reste
+         */
+
+        global $DB, $CFG;
 
         $categories = array();
+        $categoriesorder = array();
 
         foreach ($categoriesid as $categoryid) {
 
@@ -247,42 +254,146 @@ class block_mytermcourses extends block_base {
         }
 
         asort($categoriesorder);
-        $lastcategoryid = '';
-        $afterlastcategoryid = '';
+        $currentyearcategories = array();
+        $blockcommoncategories = array();
+        $previousyearcategories = array();
+        $blockpreviousyearcommoncategories = array();
+        $personalspacecategories = array();
+        $collaborativespacecategories = array();
+        $othercategories = array();
+
+        $haspersonalspace = false;
 
         foreach ($categoriesorder as $categoryid => $idnumber) {
 
+            $prefix = substr($idnumber, 0, 5);
+
             $category = $DB->get_record('course_categories', array('id' => $categoryid));
-            /**
-             * S'il y a un espace personnel, les espaces collaboratifs ne seront pas affichés
-             * (on ne veut pas d'étudiants dans les espaces collaboratifs).
-             */
 
-            if (($idnumber == 'COLLAB')||($idnumber == 'PERSO')) {
+            $commoncategoriessettings = get_config('mytermcourses', 'Common_categories');
 
-                if ($lastcategoryid) {
+            if ($prefix == $CFG->yearprefix) {
 
-                    $afterlastcategoryid = $categoryid;
+                if ($commoncategoriessettings) {
+
+                    $commoncategoriesid = explode(';', $commoncategoriessettings);
+
+                    if (in_array($category->id, $commoncategoriesid)) {
+
+                        $blockcommoncategories[] = $category;
+                    } else {
+
+                        $currentyearcategories[] = $category;
+                    }
+
+
                 } else {
 
-                    $lastcategoryid = $categoryid;
+                    $currentyearcategories[] = $category;
                 }
+            } else if ($prefix == $CFG->previousyearprefix) {
 
+                if ($commoncategoriessettings) {
+
+                    $commoncategoriesid = explode(';', $commoncategoriessettings);
+
+                    if (in_array($category->id, $commoncategoriesid)) {
+
+                        $blockpreviousyearcommoncategories[] = $category;
+                    } else {
+
+                        $previousyearcategories[] = $category;
+                    }
+                } else {
+
+                    $previousyearcategories[] = $category;
+                }
+            } else if ($idnumber == 'PERSO') {
+
+                $personalspacecategories[] = $category;
+            } else if ($idnumber == 'COLLAB') {
+
+                $collaborativespacecategories[] = $category;
             } else {
+
+                $othercategories[] = $category;
+            }
+        }
+
+        /**
+         * S'il y a un espace personnel, les espaces collaboratifs ne seront pas affichés
+         * (on ne veut pas d'étudiants dans les espaces collaboratifs).
+         */
+
+        foreach ($currentyearcategories as $category => $idnumber) {
+
+            array_push($categories, $category);
+        }
+
+        foreach ($blockcommoncategories as $category => $idnumber) {
+
+            array_push($categories, $category);
+        }
+
+        foreach ($previousyearcategories as $category => $idnumber) {
+
+            array_push($categories, $category);
+        }
+
+        foreach ($blockpreviousyearcommoncategories as $category => $idnumber) {
+
+            array_push($categories, $category);
+        }
+
+        foreach ($personalspacecategories as $category => $idnumber) {
+
+            array_push($categories, $category);
+
+            $haspersonalspace = true;
+        }
+
+        if (!$haspersonalspace) {
+
+            foreach ($collaborativespacecategories as $category => $idnumber) {
 
                 array_push($categories, $category);
             }
         }
-        if ($lastcategoryid) {
 
-            $lastcategory = $DB->get_record('course_categories', array('id' => $lastcategoryid));
-            array_push($categories, $lastcategory);
-        }
-        if ($afterlastcategoryid) {
+        foreach ($othercategories as $category => $idnumber) {
 
-            $afterlastcategory = $DB->get_record('course_categories', array('id' => $afterlastcategoryid));
-            array_push($categories, $afterlastcategory);
+            array_push($categories, $category);
         }
+
+
+
+//            // Ancienne version. A effacer ensuite.
+//
+//            if (($idnumber == 'COLLAB')||($idnumber == 'PERSO')) {
+//
+//                if ($lastcategoryid) {
+//
+//                    $afterlastcategoryid = $categoryid;
+//                } else {
+//
+//                    $lastcategoryid = $categoryid;
+//                }
+//
+//            } else {
+//
+//                array_push($categories, $category);
+//            }
+//        }
+//        if ($lastcategoryid) {
+//
+//            $lastcategory = $DB->get_record('course_categories', array('id' => $lastcategoryid));
+//            array_push($categories, $lastcategory);
+//        }
+//        if ($afterlastcategoryid) {
+//
+//            $afterlastcategory = $DB->get_record('course_categories', array('id' => $afterlastcategoryid));
+//            array_push($categories, $afterlastcategory);
+//        }
 
         return $categories;
     }
