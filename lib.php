@@ -521,34 +521,42 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
 
     $oldcourse = $DB->get_record('course', array('id' => $oldcourseid));
 
-    $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
-    $shortname = block_mytermcourses_tryshortname($oldcourse->fullname, 0);
-    $idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
-    $restoredcourse->fullname = $oldcourse->fullname;
-    $restoredcourse->shortname = $shortname;
-    $restoredcourse->idnumber = $idnumber;
-    $restoredcourse->groupmode = 1;
-    $restoredcourse->enablecompletion = 1;
-    $DB->update_record('course', $restoredcourse);
-    //~ $DB->set_field('course', 'idnumber', $newcourseidnumber, array('id' => $restoredcourseid));
-    block_mytermcourses_enrolcreator($restoredcourseid, $oldcourseid);
-    // Set coursedisplay topics format option to 0 if it's not already set.
-    $coursedisplayset = $DB->record_exists('course_format_options',
-            array('courseid' => $restoredcourseid, 'format' => 'topics', 'name' => 'coursedisplay'));
+    if ($DB->record_exists('course', array('id' => $restoredcourseid))) {
 
-    if (!$coursedisplayset) {
+        $restoredcourse = $DB->get_record('course', array('id' => $restoredcourseid));
+        $shortname = block_mytermcourses_tryshortname($oldcourse->fullname, 0);
+        $idnumber = block_mytermcourses_tryidnumber('course', $newcourseidnumber, 0);
+        $restoredcourse->fullname = $oldcourse->fullname;
+        $restoredcourse->shortname = $shortname;
+        $restoredcourse->idnumber = $idnumber;
+        $restoredcourse->groupmode = 1;
+        $restoredcourse->enablecompletion = 1;
+        $DB->update_record('course', $restoredcourse);
+        //~ $DB->set_field('course', 'idnumber', $newcourseidnumber, array('id' => $restoredcourseid));
+        block_mytermcourses_enrolcreator($restoredcourseid, $oldcourseid);
+        // Set coursedisplay topics format option to 0 if it's not already set.
+        $coursedisplayset = $DB->record_exists('course_format_options',
+                array('courseid' => $restoredcourseid, 'format' => 'topics', 'name' => 'coursedisplay'));
 
-        $option = new stdClass();
-        $option->courseid = $restoredcourseid;
-        $option->format = 'topics';
-        $option->sectionid = 0;
-        $option->name = 'coursedisplay';
-        $option->value = 0;
-        $DB->insert_record('course_format_options', $option);
+        if (!$coursedisplayset) {
+
+            $option = new stdClass();
+            $option->courseid = $restoredcourseid;
+            $option->format = 'topics';
+            $option->sectionid = 0;
+            $option->name = 'coursedisplay';
+            $option->value = 0;
+            $DB->insert_record('course_format_options', $option);
+        }
+
+        $cohorturl = new moodle_url('/blocks/mytermcourses/cohorts.php', array('id' => $restoredcourseid));
+        redirect($cohorturl);
+    } else {
+
+        echo "Restored course id : $restoredcourseid";
+        print_object($idtable);
+        echo "First = $first";
     }
-
-    $cohorturl = new moodle_url('/blocks/mytermcourses/cohorts.php', array('id' => $restoredcourseid));
-    redirect($cohorturl);
 }
 
 function block_mytermcourses_enrolcreator($courseid, $oldcourseid) {
