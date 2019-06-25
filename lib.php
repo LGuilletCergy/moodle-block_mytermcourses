@@ -556,6 +556,7 @@ function block_mytermcourses_preparerestoredcourse($restoretable, $newcourseidnu
         echo "Restored course id : $restoredcourseid";
         print_object($idtable);
         echo "First = $first";
+        print_object($restoretable);
     }
 }
 
