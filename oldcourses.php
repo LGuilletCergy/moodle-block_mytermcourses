@@ -57,8 +57,6 @@ $PAGE->set_heading($title);
 $PAGE->navbar->add(get_string('pluginname', 'block_mytermcourses'));
 $PAGE->navbar->add($title);
 
-echo $OUTPUT->header();
-
 $roleteacher = $DB->get_record('role', array('shortname' => 'editingteacher'))->id;
 $roleappuiadmin = $DB->get_record('role', array('shortname' => 'appuiadmin'))->id;
 $rolestudent = $DB->get_record('role', array('shortname' => 'student'))->id;
@@ -70,6 +68,8 @@ $listoldstudiedcourses = list_old_courses_for_role($rolestudent);
 
 $teacheroutput = trim(block_mytermcourses_oldcourses($listoldteachedcourses,
     'editingteacher', $fetchedcourseid));
+
+echo $OUTPUT->header();
 
 if ($teacheroutput) {
 
