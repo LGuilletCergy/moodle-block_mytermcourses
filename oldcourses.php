@@ -59,11 +59,11 @@ $PAGE->navbar->add($title);
 
 $roleteacher = $DB->get_record('role', array('shortname' => 'editingteacher'))->id;
 $roleappuiadmin = $DB->get_record('role', array('shortname' => 'appuiadmin'))->id;
-$rolestudent = $DB->get_record('role', array('shortname' => 'student'))->id;
+//$rolestudent = $DB->get_record('role', array('shortname' => 'student'))->id;
 
 $listoldteachedcourses = list_old_courses_for_role($roleteacher);
 $listoldappuiadmincourses = list_old_courses_for_role($roleappuiadmin);
-$listoldstudiedcourses = list_old_courses_for_role($rolestudent);
+//$listoldstudiedcourses = list_old_courses_for_role($rolestudent);
 // Les cours où l'utilisateur est enseignant.
 
 $teacheroutput = trim(block_mytermcourses_oldcourses($listoldteachedcourses,
@@ -87,14 +87,14 @@ if ($adminoutput) {
     echo "$adminoutput<br>";
 }
 
-// Les cours où l'utilisateur est étudiant.
-$studentoutput = trim(block_mytermcourses_oldcourses($listoldstudiedcourses, 'student', 0));
-
-if ($studentoutput) {
-
-    echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
-    echo "$studentoutput<br>";
-}
+//// Les cours où l'utilisateur est étudiant.
+//$studentoutput = trim(block_mytermcourses_oldcourses($listoldstudiedcourses, 'student', 0));
+//
+//if ($studentoutput) {
+//
+//    echo '<h3>'.get_string('studentoldcourses', 'block_mytermcourses').'</h3>';
+//    echo "$studentoutput<br>";
+//}
 
 echo "<a href='$CFG->wwwroot/my'><button class='btn btn-primary'>".get_string('back')."</button></a>";
 echo $OUTPUT->footer();
@@ -105,7 +105,8 @@ function list_old_courses_for_role($roleid) {
 
     $sql = "SELECT * FROM {course} WHERE idnumber LIKE '%$CFG->previousyearprefix%' AND id IN "
             . "(SELECT instanceid FROM {context} WHERE contextlevel = ".CONTEXT_COURSE." AND id IN"
-            . "(SELECT contextid FROM {role_assignments} WHERE userid = $USER->id AND roleid = $roleid))";
+            . "(SELECT contextid FROM {role_assignments} WHERE userid = $USER->id AND roleid = $roleid))"
+            . "ORDER BY {course}.category";
 
     $listoldcourses = $DB->get_records_sql($sql);
 
