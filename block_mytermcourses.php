@@ -62,11 +62,12 @@ class block_mytermcourses extends block_base {
         $this->content = new stdClass;
         $this->content->text = '';
         $lastyear = ($CFG->thisyear - 1).'-'.$CFG->thisyear;
-        $this->content->text .= "<a href='$CFG->wwwroot/blocks/mytermcourses/oldcourses.php'>"
-                . "<button id='oldcoursesbutton' class='btn btn-success' style='margin:5px'>"
-                .get_string('pluginname', 'block_mytermcourses').' '."$lastyear</button></a>&nbsp;&nbsp";
 
         if (has_capability('block/mytermcourses:createcourse', $sitecontext)) {
+
+            $this->content->text .= "<a href='$CFG->wwwroot/blocks/mytermcourses/oldcourses.php'>"
+                . "<button id='oldcoursesbutton' class='btn btn-success' style='margin:5px'>"
+                .get_string('pluginname', 'block_mytermcourses').' '."$lastyear</button></a>&nbsp;&nbsp";
 
             $this->content->text .= "<a href='$CFG->wwwroot/blocks/mytermcourses/addcourse.php'>"
                     . "<button id='addcoursebutton' class='btn btn-info' style='margin:5px'>"
