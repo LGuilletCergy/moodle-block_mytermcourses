@@ -67,7 +67,7 @@ class block_mytermcourses extends block_base {
 
             $this->content->text .= "<a href='$CFG->wwwroot/blocks/mytermcourses/oldcourses.php'>"
                 . "<button id='oldcoursesbutton' class='btn btn-success' style='margin:5px'>"
-                .get_string('mytermcourses', 'block_mytermcourses').' '."$lastyear</button></a>&nbsp;&nbsp";
+                .get_string('pluginname', 'block_mytermcourses').' '."$lastyear</button></a>&nbsp;&nbsp";
 
             $this->content->text .= "<a href='$CFG->wwwroot/blocks/mytermcourses/addcourse.php'>"
                     . "<button id='addcoursebutton' class='btn btn-info' style='margin:5px'>"
