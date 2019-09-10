@@ -35,6 +35,6 @@
  *
  */
 
-$plugin->version = 2019040503;
+$plugin->version = 2019091000;
 $plugin->requires = 2015051100;
 $plugin->component = 'block_mytermcourses';
