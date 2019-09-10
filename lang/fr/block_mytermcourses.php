@@ -36,7 +36,7 @@
  */
 
 $string['pluginname'] = 'Mes cours';
-$string['mytermcourses'] = 'Mes cours';
+$string['mytermcourses'] = 'Transférer mes cours';
 $string['mytermcourses:addinstance'] = 'Ajouter un nouveau bloc Mes cours';
 $string['mytermcourses:myaddinstance'] = 'Ajouter un nouveau bloc Mes cours à mon Tableau de bord';
 $string['changetitle'] = 'Titre du bloc';

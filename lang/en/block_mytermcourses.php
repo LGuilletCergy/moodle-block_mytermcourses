@@ -36,7 +36,7 @@
  */
 
 $string['pluginname'] = 'My term courses';
-$string['mytermcourses'] = 'My term courses';
+$string['mytermcourses'] = 'Transfer my term courses';
 $string['mytermcourses:createcourse'] = 'Create a new course (through block_mytermcourses)';
 $string['mytermcourses:addinstance'] = 'Add a new My term courses block';
 $string['mytermcourses:myaddinstance'] = 'Add a new My term courses block to the My Moodle page';
