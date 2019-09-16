@@ -58,6 +58,8 @@ $PAGE->navbar->add(get_string('pluginname', 'block_mytermcourses'));
 $PAGE->navbar->add($title);
 
 // TODO : Vérifier l'utilité.
+// En fait c'était le truc de Brice pour le droit ça.
+// Probablement plus utile maintenant mais à vérifier.
 
 $courselistcommand = "php /var/www/moodle/enp17categories.php $topidnumber";
 $courseliststream = system($courselistcommand);

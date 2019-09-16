@@ -37,6 +37,7 @@ require_once('../../config.php');
 require_once("$CFG->dirroot/blocks/mytermcourses/lib.php");
 require_once("$CFG->dirroot/blocks/mytermcourses/cohorts_form.php");
 require_once("$CFG->dirroot/cohort/lib.php");
+require_once("$CFG->dirroot/group/lib.php");
 require_once("$CFG->libdir/formslib.php");
 
 $courseid = required_param('id', PARAM_INT);

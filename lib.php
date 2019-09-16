@@ -403,6 +403,11 @@ function block_mytermcourses_fetchcourse($fetchedcourseid, $newcourseidnumber,
 
     global $CFG, $DB;
 
+//    // TODO : Tester la suppression de l'éventuel fichier de sauvegarde précédent.
+//
+//    $removecommand = "cd /var/backedcourses && rm course$fetchedcourseid.mbz";
+//    system($removecommand);
+
     $backupcommand = "cd $CFG->dirroot && moosh course-backup -f "
             . "/var/backedcourses/course$fetchedcourseid.mbz $fetchedcourseid";
     system($backupcommand);
